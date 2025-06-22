@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/authService';
-import { RegisterRequest, LoginRequest } from '../models/types';
+import { RegisterRequest, LoginRequest } from '../models/userTypes';
+import { ResponseHelper } from '../utils/responseHelper';
+import { Logger } from '../utils/logger';
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from '../config/constants';
 
 export class AuthController {
   /**
@@ -9,20 +12,19 @@ export class AuthController {
   static async register(req: Request, res: Response): Promise<void> {
     try {
       const { email, password }: RegisterRequest = req.body;
+      Logger.info(`Registration attempt for: ${email}`, 'AuthController');
 
       const result = await AuthService.register({ email, password });
 
       if (result.success) {
-        res.status(201).json(result);
+        Logger.logUserAction('Registered', result.user?.id || 'unknown', email);
+        ResponseHelper.created(res, { user: result.user, token: result.token }, SUCCESS_MESSAGES.USER_REGISTERED);
       } else {
-        res.status(400).json(result);
+        ResponseHelper.badRequest(res, result.message);
       }
     } catch (error) {
-      console.error('Registration controller error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+      Logger.error('Registration controller error', 'AuthController', error as Error);
+      ResponseHelper.error(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -32,20 +34,19 @@ export class AuthController {
   static async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password }: LoginRequest = req.body;
+      Logger.info(`Login attempt for: ${email}`, 'AuthController');
 
       const result = await AuthService.login({ email, password });
 
       if (result.success) {
-        res.status(200).json(result);
+        Logger.logUserAction('Logged in', result.user?.id || 'unknown', email);
+        ResponseHelper.success(res, { user: result.user, token: result.token }, SUCCESS_MESSAGES.LOGIN_SUCCESSFUL);
       } else {
-        res.status(401).json(result);
+        ResponseHelper.unauthorized(res, result.message);
       }
     } catch (error) {
-      console.error('Login controller error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+      Logger.error('Login controller error', 'AuthController', error as Error);
+      ResponseHelper.error(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -54,30 +55,19 @@ export class AuthController {
    */
   static async getDashboard(req: Request, res: Response): Promise<void> {
     try {
-     // req.user is set by the authenticateToken middleware
-     const user = req.user;
+      // req.user is set by the authenticateToken middleware
+      const user = req.user;
       
-     if (!user) {
-       res.status(401).json({
-         success: false,
-         message: 'User not authenticated'
-       });
-       return;
-     }
-      res.status(200).json({
-        success: true,
-        message: 'Dashboard data retrieved',
-        data: {
-          user: user
-        }
-      });
+      if (!user) {
+        return ResponseHelper.unauthorized(res, ERROR_MESSAGES.UNAUTHORIZED);
+      }
+
+      Logger.debug(`Dashboard requested for user: ${user.id}`, 'AuthController');
+      
+      ResponseHelper.success(res, { user }, SUCCESS_MESSAGES.DASHBOARD_RETRIEVED);
     } catch (error) {
-      console.error('Dashboard controller error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+      Logger.error('Dashboard controller error', 'AuthController', error as Error);
+      ResponseHelper.error(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
-
 } 

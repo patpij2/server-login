@@ -6,12 +6,13 @@
 import { Router } from 'express';
 import { MemoryController } from '../controllers/memoryController';
 import { authenticateToken } from '../middleware/auth';
+import { ValidationMiddleware } from '../middleware/validation';
 
 const router = Router();
 
 // This route is protected. Only logged-in users can add memories.
-router.post('/add', authenticateToken, MemoryController.addMemory);
-router.post('/search', authenticateToken, MemoryController.searchMemories);
-router.post('/ask', authenticateToken, MemoryController.askQuestion);
+router.post('/add', authenticateToken, ValidationMiddleware.validateMemoryContent, MemoryController.addMemory);
+router.post('/search', authenticateToken, ValidationMiddleware.validateSearchQuery, MemoryController.searchMemories);
+router.post('/ask', authenticateToken, ValidationMiddleware.validateQuestion, MemoryController.askQuestion);
 
 export default router;

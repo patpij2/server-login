@@ -223,8 +223,8 @@
                     document.getElementById('loginForm').reset();
                     
                     // Store user data in browser storage
-                    localStorage.setItem('authToken', data.token);
-                    console.log('Token stored:', data.token); // Add this line
+                    localStorage.setItem('authToken', data.data.token);
+                    console.log('Token stored:', data.data.token); // Add this line
                     
                     // Redirect to dashboard after 1 second
                     setTimeout(() => {

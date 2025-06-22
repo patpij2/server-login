@@ -1,5 +1,8 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/userService';
+import { ResponseHelper } from '../utils/responseHelper';
+import { Logger } from '../utils/logger';
+import { SUCCESS_MESSAGES, ERROR_MESSAGES } from '../config/constants';
 
 export class UserController {
   /**
@@ -7,19 +10,18 @@ export class UserController {
    */
   static async getAllUsers(req: Request, res: Response): Promise<void> {
     try {
+      Logger.debug('Getting all users', 'UserController');
+      
       const result = await UserService.getAllUsers();
 
       if (result.success) {
-        res.status(200).json(result);
+        ResponseHelper.success(res, result.data, SUCCESS_MESSAGES.USERS_FETCHED);
       } else {
-        res.status(500).json(result);
+        ResponseHelper.error(res, result.message);
       }
     } catch (error) {
-      console.error('Get users controller error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+      Logger.error('Get users controller error', 'UserController', error as Error);
+      ResponseHelper.error(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -29,20 +31,18 @@ export class UserController {
   static async getUserById(req: Request, res: Response): Promise<void> {
     try {
       const { id } = req.params;
+      Logger.debug(`Getting user by ID: ${id}`, 'UserController');
 
       const result = await UserService.getUserById(id);
 
       if (result.success) {
-        res.status(200).json(result);
+        ResponseHelper.success(res, result.data, SUCCESS_MESSAGES.USER_FETCHED);
       } else {
-        res.status(404).json(result);
+        ResponseHelper.notFound(res, result.message);
       }
     } catch (error) {
-      console.error('Get user controller error:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Internal server error'
-      });
+      Logger.error('Get user controller error', 'UserController', error as Error);
+      ResponseHelper.error(res, ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -50,8 +50,9 @@ export class UserController {
    * Health check
    */
   static async healthCheck(req: Request, res: Response): Promise<void> {
-    res.status(200).json({
-      success: true,
+    Logger.info('Health check requested', 'UserController');
+    
+    ResponseHelper.success(res, {
       message: 'Login API server is running with Supabase!',
       endpoints: {
         register: 'POST /api/auth/register',
@@ -59,6 +60,6 @@ export class UserController {
         users: 'GET /api/users',
         health: 'GET /api/health'
       }
-    });
+    }, 'Server is healthy');
   }
 } 

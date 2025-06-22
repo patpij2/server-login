@@ -8,6 +8,7 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config/environment';
 import { UserResponse } from '../models/types';
+import { JWT_CONFIG } from '../config/constants';
 
 /**
  * JWTUtils - Token management utilities
@@ -33,10 +34,10 @@ export class JWTUtils {
         email: user.email,
         created_at: user.created_at
       },
-      config.jwt.secret,
+      JWT_CONFIG.SECRET,  // ✅ Using constants
       {
-        expiresIn: config.jwt.expiresIn // Token expires in 24 hours
-      }
+        expiresIn: JWT_CONFIG.EXPIRES_IN
+      }  
     );
   }
 
@@ -56,7 +57,7 @@ export class JWTUtils {
    */
   static verifyToken(token: string): UserResponse {
     try {
-      const decoded = jwt.verify(token, config.jwt.secret) as UserResponse;
+      const decoded = jwt.verify(token, JWT_CONFIG.SECRET) as UserResponse;
       return decoded;
     } catch (error) {
       throw new Error('Invalid or expired token');
@@ -71,7 +72,7 @@ export class JWTUtils {
    */
   static isTokenExpired(token: string): boolean {
     try {
-      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const decoded = jwt.verify(token, JWT_CONFIG.SECRET) as any;
       const currentTime = Math.floor(Date.now() / 1000);
       return decoded.exp < currentTime;
     } catch (error) {

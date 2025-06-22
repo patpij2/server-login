@@ -4,8 +4,10 @@ dotenv.config(); // Add this line to the top
 import express from 'express';
 import cors from 'cors';
 import { config } from './config/environment';
+import { API_CONFIG, API_ENDPOINTS } from './config/constants';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { Logger } from './utils/logger';
 
 // Create Express app
 const app = express();
@@ -22,16 +24,16 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-app.listen(config.port, () => {
-  console.log(`🚀 Backend API Server running on http://localhost:${config.port}`);
-  console.log('📝 Available API endpoints:');
-  console.log('  POST /api/auth/register - Register a new user');
-  console.log('  POST /api/auth/login - Login user');
-  console.log('  GET /api/users - List all users (for testing)');
-  console.log('  GET /api/users/:id - Get user by ID');
-  console.log('  GET /api/health - Health check');
-  console.log('');
-  console.log('💡 Frontend should run on http://localhost:3000');
-  console.log('🗄️  Using Supabase database');
-  console.log('🏗️  Professional architecture with organized code');
+app.listen(API_CONFIG.PORT, () => {
+  Logger.info(`🚀 Backend API Server running on http://localhost:${API_CONFIG.PORT}`, 'Server');
+  Logger.info('📝 Available API endpoints:', 'Server');
+  Logger.info(`  POST ${API_ENDPOINTS.AUTH.REGISTER} - Register a new user`, 'Server');
+  Logger.info(`  POST ${API_ENDPOINTS.AUTH.LOGIN} - Login user`, 'Server');
+  Logger.info(`  GET ${API_ENDPOINTS.USERS.ALL} - List all users (for testing)`, 'Server');
+  Logger.info(`  GET ${API_ENDPOINTS.USERS.BY_ID} - Get user by ID`, 'Server');
+  Logger.info(`  GET ${API_ENDPOINTS.HEALTH} - Health check`, 'Server');
+  Logger.info('', 'Server');
+  Logger.info('💡 Frontend should run on http://localhost:3000', 'Server');
+  Logger.info('🗄️  Using Supabase database', 'Server');
+  Logger.info('🏗️  Professional architecture with organized code', 'Server');
 });
