@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Simple Login System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .dashboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .welcome {
+            font-size: 24px;
+            color: #333;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .dashboard-content {
+            text-align: center;
+            padding: 40px 0;
+        }
+        .dashboard-title {
+            font-size: 32px;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .dashboard-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .user-info {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .user-email {
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+        .back-to-login {
+            margin-top: 30px;
+        }
+        .back-to-login a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+        .memory-section { margin-top: 40px; text-align: left; }
+        .memory-section h2 { text-align: center; margin-bottom: 20px; color: #333; }
+        #memoryForm textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+        #memoryForm button { width: 100%; background-color: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        #memoryForm button:hover { background-color: #218838; }
+        #memoryMessage { margin-top: 15px; padding: 10px; border-radius: 5px; text-align: center; }
+        #memoryMessage.success { background-color: #d4edda; color: #155724; }
+        #memoryMessage.error { background-color: #f8d7da; color: #721c24; }
+        .search-section { margin-top: 40px; text-align: left; border-top: 2px solid #f0f0f0; padding-top: 30px; }
+        .search-section h2 { text-align: center; margin-bottom: 20px; color: #333; }
+        #searchForm input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box; margin-bottom: 10px; }
+        #searchForm button { width: 100%; background-color: #007bff; color: white; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        #searchForm button:hover { background-color: #0056b3; }
+        #searchResults { margin-top: 20px; }
+        .result-item { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .result-item h3 { margin-top: 0; color: #0056b3; }
+        .result-item p { white-space: pre-wrap; word-wrap: break-word; }
+        .result-item .score { font-size: 0.9em; color: #6c757d; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <div class="welcome">Welcome to Dashboard</div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+        
+        <div class="dashboard-content">
+            <h1 class="dashboard-title">🎉 Dashboard</h1>
+            <p class="dashboard-message">You're successfully logged in!</p>
+            
+            <div class="user-info">
+                <p>👤 <span class="user-email" id="userEmail">Loading...</span></p>
+                <p>🆔 User ID: <span id="userId">Loading...</span></p>
+            </div>
+            
+            <div class="memory-section">
+                <h2>Add a New Memory</h2>
+                <form id="memoryForm">
+                    <textarea id="memoryContent" placeholder="Type something to remember..."></textarea>
+                    <button type="submit">Save to Supermemory</button>
+                </form>
+                <div id="memoryMessage"></div>
+            </div>
+
+            <div class="search-section">
+                <h2>Search Your Memories</h2>
+                <form id="searchForm">
+                    <input type="text" id="searchQuery" placeholder="Search for anything...">
+                    <button type="submit">Search</button>
+                </form>
+                <div id="searchResults">
+                    <!-- Search results will be displayed here -->
+                </div>
+            </div>            
+
+            <div class="back-to-login">
+                <a href="index.html">← Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api'; 
+
+        // Check if user is logged in when page loads
+        window.onload = function() {
+            // Check if user data exists
+            const token = localStorage.getItem('authToken');
+            console.log('Token from storage:', token); // Debug line
+            
+            if (!token) {
+                // No user data, redirect to login
+                alert('Please login first');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // User is logged in, load dashboard
+            loadDashboard();
+        };
+
+        // Load dashboard data from backend using JWT token
+        async function loadDashboard() {
+            try {
+                const token = localStorage.getItem('authToken');
+                
+                if (!token) {
+                    // This part is working correctly.
+                    throw new Error('No authentication token found in storage.');
+                }
+
+                // The 'fetch' call is where the error is.
+                // We need to add the 'headers' object to send the token.
+                const response = await fetch(`${API_URL}/auth/dashboard`, {
+                    method: 'GET',
+                    
+                    // =======================================================
+                    //  ✅ THIS IS THE FIX ✅
+                    //  We must include the 'headers' to send the token.
+                    // =======================================================
+                    headers: {
+                        // This tells the backend we're sending JSON
+                        'Content-Type': 'application/json',
+                        
+                        // This sends the token for authentication
+                        // The format "Bearer <token>" is the standard.
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('userEmail').textContent = data.data.user.email;
+                    document.getElementById('userId').textContent = data.data.user.id;
+                } else {
+                    // If the token is invalid or expired, this will now catch it.
+                    localStorage.removeItem('authToken');
+                    alert('Session invalid or expired. Please login again.');
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                console.error('Error in loadDashboard:', error);
+                localStorage.removeItem('authToken');
+                alert('Could not connect to the server. Please login again.');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            // Clear JWT token from browser storage
+            localStorage.removeItem('authToken');
+            
+            alert('Logged out successfully!');
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('memoryForm').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Prevent the form from reloading the page
+
+        const contentInput = document.getElementById('memoryContent');
+        const content = contentInput.value.trim();
+        const token = localStorage.getItem('authToken');
+        const messageDiv = document.getElementById('memoryMessage');
+
+        // Clear previous messages
+        messageDiv.textContent = '';
+        messageDiv.className = '';
+
+        if (!content) {
+            messageDiv.textContent = 'Please enter something to remember.';
+            messageDiv.className = 'error';
+            return;
+        }
+
+        if (!token) {
+            alert('Your session has expired. Please log in again.');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/memories/add`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: content }),
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                messageDiv.textContent = `Success! Memory saved with ID: ${result.data.memoryId}`;
+                messageDiv.className = 'success';
+                contentInput.value = ''; // Clear the textarea
+            } else {
+                messageDiv.textContent = `Error: ${result.message}`;
+                messageDiv.className = 'error';
+            }
+        } catch (error) {
+            console.error('Error submitting memory:', error);
+            messageDiv.textContent = 'An error occurred. Please try again.';
+            messageDiv.className = 'error';
+        }
+    });
+        document.getElementById('searchForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const queryInput = document.getElementById('searchQuery');
+        const query = queryInput.value.trim();
+        const token = localStorage.getItem('authToken');
+        const resultsDiv = document.getElementById('searchResults');
+
+        resultsDiv.innerHTML = '<p>Searching...</p>'; // Show a loading message
+
+        if (!query) {
+            resultsDiv.innerHTML = '<p style="color: red;">Please enter a search term.</p>';
+            return;
+        }
+
+        if (!token) {
+            alert('Your session has expired. Please log in again.');
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/memories/search`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.data.results.length > 0) {
+                // Clear loading message and display results
+                resultsDiv.innerHTML = '';
+                result.data.results.forEach(item => {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'result-item';
+
+                    let chunksHTML = item.chunks.map(chunk => `<p>${chunk.content}</p>`).join('');
+
+                    resultElement.innerHTML = `
+                        <h3>${item.title || 'Memory Chunk'}</h3>
+                        ${chunksHTML}
+                        <p class="score">Relevance Score: ${Math.round(item.score * 100)}%</p>
+                    `;
+                    resultsDiv.appendChild(resultElement);
+                });
+            } else if (result.success) {
+                resultsDiv.innerHTML = '<p>No results found for your query.</p>';
+            } else {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+            }
+        } catch (error) {
+            console.error('Error searching memories:', error);
+            resultsDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
+        }
+    });
+    </script>
+</body>
+</html>
