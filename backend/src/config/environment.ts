@@ -21,7 +21,7 @@ export const config = {
     saltRounds: 10,
   },
 
-  // �� JWT SETTINGS
+  // 🔐 JWT SETTINGS
   jwt: {
     secret: process.env.JWT_SECRET!,
     expiresIn: '24h', // Token expires in 24 hours
@@ -31,6 +31,11 @@ export const config = {
   supermemory: {
     apiKey: process.env.SUPERMEMORY_API_KEY!,
   },
+
+  openrouter: {
+    apiKey: process.env.OPENROUTER_API_KEY!,
+  },
+
 } as const;
 
 
@@ -40,7 +45,8 @@ const requiredEnvVars = [
   'SUPABASE_ANON_KEY', 
   'SUPABASE_SERVICE_ROLE_KEY',
   'JWT_SECRET',
-  'SUPERMEMORY_API_KEY'
+  'SUPERMEMORY_API_KEY',
+  'OPENROUTER_API_KEY'
 ];
 
 for (const envVar of requiredEnvVars) {

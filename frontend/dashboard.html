@@ -96,6 +96,72 @@
         .result-item h3 { margin-top: 0; color: #0056b3; }
         .result-item p { white-space: pre-wrap; word-wrap: break-word; }
         .result-item .score { font-size: 0.9em; color: #6c757d; text-align: right; }
+        .qa-section { 
+            margin-top: 40px; 
+            text-align: left; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 30px; 
+        }
+        .qa-section h2 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+        .qa-section h2::before {
+            content: "🤖 ";
+        }
+        #qaForm input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            margin-bottom: 10px; 
+        }
+        #qaForm button { 
+            width: 100%; 
+            background-color: #6f42c1; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
+        #qaForm button:hover { 
+            background-color: #5a32a3; 
+        }
+        #qaForm button:disabled { 
+            background-color: #6c757d; 
+            cursor: not-allowed; 
+        }
+        #qaResults { 
+            margin-top: 20px; 
+        }
+        .qa-item { 
+            background-color: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+        }
+        .qa-question { 
+            font-weight: bold; 
+            color: #6f42c1; 
+            margin-bottom: 10px; 
+        }
+        .qa-answer { 
+            background-color: white; 
+            padding: 10px; 
+            border-radius: 5px; 
+            border-left: 4px solid #6f42c1; 
+        }
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -132,7 +198,19 @@
                 <div id="searchResults">
                     <!-- Search results will be displayed here -->
                 </div>
+            </div>    
+
+            <div class="qa-section">
+                <h2>Ask AI About Your Memories</h2>
+                <form id="qaForm">
+                    <input type="text" id="questionInput" placeholder="Ask anything about your memories... (e.g., 'What did I learn about React?' or 'When was my last meeting?')">
+                    <button type="submit" id="qaButton">Ask AI</button>
+                </form>
+                <div id="qaResults">
+                    <!-- AI answers will be displayed here -->
+                </div>
             </div>            
+        
 
             <div class="back-to-login">
                 <a href="index.html">← Back to Login</a>
@@ -326,6 +404,68 @@
             resultsDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
         }
     });
+
+        // NEW: AI Q&A Form Handler
+        document.getElementById('qaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const questionInput = document.getElementById('questionInput');
+            const question = questionInput.value.trim();
+            const token = localStorage.getItem('authToken');
+            const resultsDiv = document.getElementById('qaResults');
+            const qaButton = document.getElementById('qaButton');
+
+            if (!question) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter a question.</p>';
+                return;
+            }
+
+            if (!token) {
+                alert('Your session has expired. Please log in again.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Show loading state
+            qaButton.disabled = true;
+            qaButton.textContent = 'Thinking...';
+            resultsDiv.innerHTML = '<p class="loading">🤖 AI is thinking about your question...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/memories/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ question: question }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Display the AI answer
+                    resultsDiv.innerHTML = `
+                        <div class="qa-item">
+                            <div class="qa-question">❓ ${result.data.question}</div>
+                            <div class="qa-answer">🤖 ${result.data.answer}</div>
+                        </div>
+                    `;
+                    
+                    // Clear the input
+                    questionInput.value = '';
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error asking AI question:', error);
+                resultsDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
+            } finally {
+                // Reset button state
+                qaButton.disabled = false;
+                qaButton.textContent = 'Ask AI';
+            }
+        });
     </script>
 </body>
 </html>

@@ -54,4 +54,35 @@ export class MemoryController {
       });
     }
   }
+    /**
+   * Handles AI Q&A requests
+   */
+    static async askQuestion(req: Request, res: Response): Promise<void> {
+      try {
+        const user = req.user!;
+        const { question } = req.body;
+  
+        if (!question || question.trim() === '') {
+          res.status(400).json({
+            success: false,
+            message: 'Question is required.',
+          });
+          return;
+        }
+  
+        const result = await MemoryService.askQuestion(question, user.id);
+  
+        if (result.success) {
+          res.status(200).json(result);
+        } else {
+          res.status(400).json(result);
+        }
+      } catch (error) {
+        console.error('Ask question controller error:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error',
+        });
+      }
+    }  
 }
