@@ -15,7 +15,7 @@ export const API_CONFIG = {
 // JWT Configuration
 export const JWT_CONFIG = {
   SECRET: process.env.JWT_SECRET || 'your-secret-key',
-  EXPIRES_IN: '24h',
+  EXPIRES_IN: '72h',
   ALGORITHM: 'HS256',
 } as const;
 
