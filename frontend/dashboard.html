@@ -162,6 +162,287 @@
             color: #6c757d;
             font-style: italic;
         }
+        
+        /* Email Scraping Section Styles */
+        .email-scraping-section { 
+            margin-top: 40px; 
+            text-align: left; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 30px; 
+        }
+        .email-scraping-section h2 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+        .email-scraping-section h2::before {
+            content: "📧 ";
+        }
+        #emailScrapingForm input { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            margin-bottom: 10px; 
+        }
+        #emailScrapingForm button { 
+            width: 100%; 
+            background-color: #17a2b8; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
+        #emailScrapingForm button:hover { 
+            background-color: #138496; 
+        }
+        #emailScrapingForm button:disabled { 
+            background-color: #6c757d; 
+            cursor: not-allowed; 
+        }
+        #emailScrapingResults { 
+            margin-top: 20px; 
+        }
+        
+        /* Loading Animation */
+        .scraping-loading {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #17a2b8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .scraping-progress {
+            color: #17a2b8;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .scraping-status {
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        /* Real-time Progress Updates */
+        .progress-updates {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .progress-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #f8f9fa;
+            font-size: 14px;
+        }
+        .progress-item:last-child {
+            border-bottom: none;
+        }
+        .progress-item.page-start {
+            color: #17a2b8;
+        }
+        .progress-item.emails-found {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .progress-item.page-complete {
+            color: #6c757d;
+        }
+        .progress-item.page-error {
+            color: #dc3545;
+        }
+        .progress-item.page-blocked {
+            color: #ffc107;
+        }
+        .progress-stats {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        
+        /* Email Results Table */
+        .email-results {
+            margin-top: 20px;
+        }
+        .email-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .email-table th {
+            background-color: #17a2b8;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        .email-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .email-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .email-table tr:last-child td {
+            border-bottom: none;
+        }
+        .email-count {
+            background-color: #e3f2fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .no-emails {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .scraping-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        /* Gmail Integration Styles */
+        .gmail-section { 
+            margin-top: 40px; 
+            text-align: left; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 30px; 
+        }
+        .gmail-section h2 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+        .gmail-section h2::before {
+            content: "📧 ";
+        }
+        .gmail-connection {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .gmail-connected {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .gmail-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .connect-gmail-btn {
+            background-color: #4285f4;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .connect-gmail-btn:hover {
+            background-color: #3367d6;
+        }
+        .draft-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-top: 20px;
+        }
+        .draft-form input, .draft-form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .draft-form textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .draft-form button {
+            width: 100%;
+            background-color: #34a853;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .draft-form button:hover {
+            background-color: #2d8f47;
+        }
+        .draft-form button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .gmail-credentials {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .gmail-credentials h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .gmail-credentials pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -208,6 +489,40 @@
                 </form>
                 <div id="qaResults">
                     <!-- AI answers will be displayed here -->
+                </div>
+            </div>
+
+            <div class="email-scraping-section">
+                <h2>Email Scraper</h2>
+                <form id="emailScrapingForm">
+                    <input type="url" id="websiteUrl" placeholder="Enter website URL to scrape for emails (e.g., https://example.com)" required>
+                    <button type="submit" id="scrapeButton">🔍 Start Scraping</button>
+                </form>
+                <div id="emailScrapingResults">
+                    <!-- Email scraping results will be displayed here -->
+                </div>
+            </div>
+
+            <div class="gmail-section">
+                <h2>Gmail Integration</h2>
+                <div class="gmail-connection" id="gmailConnection">
+                    <h3>Connect Your Gmail Account</h3>
+                    <p>Connect your Gmail account to create drafts directly from the dashboard.</p>
+                    <a href="#" class="connect-gmail-btn" id="connectGmailBtn">🔗 Connect Gmail</a>
+                </div>
+                
+                <div class="draft-form" id="draftForm" style="display: none;">
+                    <h3>Create Gmail Draft</h3>
+                    <button type="button" id="testGmailBtn" style="background-color: #6c757d; margin-bottom: 15px;">🔧 Test Gmail Connection</button>
+                    <form id="gmailDraftForm">
+                        <input type="email" id="draftTo" placeholder="To: recipient@example.com" required>
+                        <input type="text" id="draftSubject" placeholder="Subject" required>
+                        <input type="email" id="draftCc" placeholder="CC: cc@example.com (optional)">
+                        <input type="email" id="draftBcc" placeholder="BCC: bcc@example.com (optional)">
+                        <textarea id="draftBody" placeholder="Email body..." required></textarea>
+                        <button type="submit" id="createDraftBtn">📝 Create Draft</button>
+                    </form>
+                    <div id="draftMessage"></div>
                 </div>
             </div>            
         
@@ -465,6 +780,541 @@
                 qaButton.disabled = false;
                 qaButton.textContent = 'Ask AI';
             }
+        });
+
+        // Email Scraping Form Handler
+        document.getElementById('emailScrapingForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const urlInput = document.getElementById('websiteUrl');
+            const url = urlInput.value.trim();
+            const resultsDiv = document.getElementById('emailScrapingResults');
+            const scrapeButton = document.getElementById('scrapeButton');
+
+            if (!url) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter a website URL.</p>';
+                return;
+            }
+
+            // Show loading state
+            scrapeButton.disabled = true;
+            scrapeButton.textContent = '🔄 Scraping...';
+            
+            // Initialize progress tracking
+            let progressUpdates = [];
+            let currentStats = {
+                pagesVisited: 0,
+                totalEmails: 0,
+                emailsFound: 0
+            };
+            
+            // Show initial loading animation
+            resultsDiv.innerHTML = `
+                <div class="scraping-loading">
+                    <div class="spinner"></div>
+                    <div class="scraping-progress">🔍 Starting email scraping...</div>
+                    <div class="scraping-status">Connecting to ${url}</div>
+                </div>
+                <div class="progress-updates" id="progressUpdates">
+                    <div class="progress-stats" id="progressStats">
+                        📊 Pages: 0 | 📧 Emails: 0
+                    </div>
+                </div>
+            `;
+
+            try {
+                // Use Server-Sent Events for real-time progress
+                const eventSource = new EventSource(`http://localhost:3001/api/scrape/fast/progress?url=${encodeURIComponent(url)}`);
+                
+                // Send the actual request
+                const response = await fetch('http://localhost:3001/api/scrape/fast/progress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: url }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+                                handleProgressUpdate(data, progressUpdates, currentStats, resultsDiv);
+                            } catch (e) {
+                                console.error('Error parsing progress data:', e);
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error scraping emails:', error);
+                resultsDiv.innerHTML = `
+                    <div class="scraping-error">
+                        ❌ Error: Could not connect to the scraper service. Make sure the scraper is running on port 3001.
+                    </div>
+                `;
+            } finally {
+                // Reset button state
+                scrapeButton.disabled = false;
+                scrapeButton.textContent = '🔍 Start Scraping';
+            }
+        });
+
+        // Handle real-time progress updates
+        function handleProgressUpdate(data, progressUpdates, currentStats, resultsDiv) {
+            const progressUpdatesDiv = document.getElementById('progressUpdates');
+            const progressStatsDiv = document.getElementById('progressStats');
+            
+            if (!progressUpdatesDiv || !progressStatsDiv) return;
+
+            switch (data.type) {
+                case 'page_start':
+                    progressUpdates.push({
+                        type: 'page-start',
+                        message: `🔍 Starting to scrape: ${data.url} (depth: ${data.depth})`
+                    });
+                    break;
+                    
+                case 'emails_found':
+                    progressUpdates.push({
+                        type: 'emails-found',
+                        message: `📧 Found ${data.emails.length} email(s) on ${data.url}: ${data.emails.join(', ')}`
+                    });
+                    currentStats.emailsFound += data.emails.length;
+                    currentStats.totalEmails = data.totalEmails;
+                    break;
+                    
+                case 'page_complete':
+                    progressUpdates.push({
+                        type: 'page-complete',
+                        message: `✅ Completed: ${data.url} (${data.emailsFound} emails found)`
+                    });
+                    currentStats.pagesVisited = data.pagesVisited;
+                    break;
+                    
+                case 'page_error':
+                    progressUpdates.push({
+                        type: 'page-error',
+                        message: `❌ Error scraping ${data.url}: ${data.error}`
+                    });
+                    break;
+                    
+                case 'page_blocked':
+                    progressUpdates.push({
+                        type: 'page-blocked',
+                        message: `🚫 Blocked by robots.txt: ${data.url}`
+                    });
+                    break;
+                    
+                case 'complete':
+                    // Show final results
+                    displayEmailResults(data.data);
+                    return;
+                    
+                case 'error':
+                    resultsDiv.innerHTML = `
+                        <div class="scraping-error">
+                            ❌ Error: ${data.error || data.message || 'Failed to scrape emails'}
+                        </div>
+                    `;
+                    return;
+            }
+
+            // Update progress display
+            progressStatsDiv.innerHTML = `📊 Pages: ${currentStats.pagesVisited} | 📧 Emails: ${currentStats.totalEmails}`;
+            
+            // Update progress list (keep last 20 items)
+            const recentUpdates = progressUpdates.slice(-20);
+            progressUpdatesDiv.innerHTML = `
+                <div class="progress-stats" id="progressStats">
+                    📊 Pages: ${currentStats.pagesVisited} | 📧 Emails: ${currentStats.totalEmails}
+                </div>
+                ${recentUpdates.map(update => `
+                    <div class="progress-item ${update.type}">
+                        ${update.message}
+                    </div>
+                `).join('')}
+            `;
+            
+            // Auto-scroll to bottom
+            progressUpdatesDiv.scrollTop = progressUpdatesDiv.scrollHeight;
+        }
+
+        // Function to display email results in a table
+        function displayEmailResults(data) {
+            const resultsDiv = document.getElementById('emailScrapingResults');
+            
+            if (!data.emails || data.emails.length === 0) {
+                resultsDiv.innerHTML = `
+                    <div class="email-results">
+                        <div class="no-emails">
+                            📭 No emails found on ${data.url}
+                        </div>
+                        <div style="text-align: center; margin-top: 10px; color: #6c757d;">
+                            Pages visited: ${data.pagesVisited || 0}
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Create table rows for emails
+            const emailRows = data.emails.map((email, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${email}</td>
+                    <td>${data.url}</td>
+                    <td>${new Date(data.timestamp).toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            resultsDiv.innerHTML = `
+                <div class="email-results">
+                    <div class="email-count">
+                        📧 Found ${data.totalEmails} email(s) on ${data.url}
+                    </div>
+                    <table class="email-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Email Address</th>
+                                <th>Source URL</th>
+                                <th>Scraped At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${emailRows}
+                        </tbody>
+                    </table>
+                    <div style="text-align: center; margin-top: 15px; color: #6c757d;">
+                        Pages visited: ${data.pagesVisited || 0} | Mode: ${data.mode || 'standard'}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Gmail Integration
+        let gmailConnected = false;
+
+        // Check Gmail connection status on page load
+        async function checkGmailConnection() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/gmail/check`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.data.connected) {
+                    gmailConnected = true;
+                    showGmailConnected();
+                } else {
+                    gmailConnected = false;
+                    showGmailDisconnected();
+                }
+            } catch (error) {
+                console.error('Error checking Gmail connection:', error);
+                gmailConnected = false;
+                showGmailDisconnected();
+            }
+        }
+
+        // Connect Gmail button handler
+        document.getElementById('connectGmailBtn').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login first');
+                return;
+            }
+
+            try {
+                // Get Gmail OAuth URL
+                const response = await fetch(`${API_URL}/gmail/auth/url`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Open Gmail OAuth in a new window
+                    const authWindow = window.open(result.data.authUrl, 'gmail-auth', 'width=500,height=600');
+                    
+                    // Listen for the callback
+                    window.addEventListener('message', async function(event) {
+                        if (event.origin !== window.location.origin) return;
+                        
+                        if (event.data.type === 'gmail-auth-success') {
+                            gmailConnected = true;
+                            showGmailConnected();
+                            if (authWindow) authWindow.close();
+                        }
+                    });
+                } else {
+                    alert('Failed to get Gmail authorization URL');
+                }
+            } catch (error) {
+                console.error('Error connecting Gmail:', error);
+                alert('Failed to connect Gmail');
+            }
+        });
+
+        // Show Gmail connected state
+        function showGmailConnected() {
+            const connectionDiv = document.getElementById('gmailConnection');
+            const draftForm = document.getElementById('draftForm');
+            
+            connectionDiv.innerHTML = `
+                <div class="gmail-connected">
+                    <h3>✅ Gmail Connected Successfully!</h3>
+                    <p>Your Gmail account is connected and credentials are stored securely.</p>
+                    <button type="button" id="disconnectGmailBtn" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                        🔌 Disconnect Gmail
+                    </button>
+                </div>
+            `;
+            
+            draftForm.style.display = 'block';
+            
+            // Add disconnect button handler
+            document.getElementById('disconnectGmailBtn').addEventListener('click', disconnectGmail);
+        }
+
+        // Show Gmail disconnected state
+        function showGmailDisconnected() {
+            const connectionDiv = document.getElementById('gmailConnection');
+            const draftForm = document.getElementById('draftForm');
+            
+            connectionDiv.innerHTML = `
+                <div class="gmail-disconnected">
+                    <h3>Connect Your Gmail Account</h3>
+                    <p>Connect your Gmail account to create drafts directly from the dashboard.</p>
+                    <a href="#" class="connect-gmail-btn" id="connectGmailBtn">🔗 Connect Gmail</a>
+                </div>
+            `;
+            
+            draftForm.style.display = 'none';
+            
+            // Re-add connect button handler
+            document.getElementById('connectGmailBtn').addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Please login first');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/gmail/auth/url`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const authWindow = window.open(result.data.authUrl, 'gmail-auth', 'width=500,height=600');
+                        
+                        window.addEventListener('message', async function(event) {
+                            if (event.origin !== window.location.origin) return;
+                            
+                            if (event.data.type === 'gmail-auth-success') {
+                                gmailConnected = true;
+                                showGmailConnected();
+                                if (authWindow) authWindow.close();
+                            }
+                        });
+                    } else {
+                        alert('Failed to get Gmail authorization URL');
+                    }
+                } catch (error) {
+                    console.error('Error connecting Gmail:', error);
+                    alert('Failed to connect Gmail');
+                }
+            });
+        }
+
+        // Disconnect Gmail function
+        async function disconnectGmail() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/gmail/disconnect`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    gmailConnected = false;
+                    showGmailDisconnected();
+                    alert('Gmail disconnected successfully');
+                } else {
+                    alert('Failed to disconnect Gmail');
+                }
+            } catch (error) {
+                console.error('Error disconnecting Gmail:', error);
+                alert('Failed to disconnect Gmail');
+            }
+        }
+
+        // Test Gmail Connection Button Handler
+        document.getElementById('testGmailBtn').addEventListener('click', async function() {
+            if (!gmailConnected) {
+                alert('Please connect your Gmail account first');
+                return;
+            }
+
+            const testBtn = document.getElementById('testGmailBtn');
+            const messageDiv = document.getElementById('draftMessage');
+
+            testBtn.disabled = true;
+            testBtn.textContent = '🔧 Testing...';
+            messageDiv.innerHTML = '';
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/gmail/test`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.innerHTML = `
+                        <div class="gmail-connected">
+                            ✅ Gmail connection test successful!<br>
+                            Email: ${result.data.profile.emailAddress}<br>
+                            Messages Total: ${result.data.profile.messagesTotal}
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `<p style="color: red;">❌ Connection test failed: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error testing Gmail connection:', error);
+                messageDiv.innerHTML = '<p style="color: red;">❌ Failed to test connection. Please try again.</p>';
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '🔧 Test Gmail Connection';
+            }
+        });
+
+        // Gmail Draft Form Handler
+        document.getElementById('gmailDraftForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!gmailConnected) {
+                alert('Please connect your Gmail account first');
+                return;
+            }
+
+            const to = document.getElementById('draftTo').value.trim();
+            const subject = document.getElementById('draftSubject').value.trim();
+            const body = document.getElementById('draftBody').value.trim();
+            const cc = document.getElementById('draftCc').value.trim();
+            const bcc = document.getElementById('draftBcc').value.trim();
+            const createBtn = document.getElementById('createDraftBtn');
+            const messageDiv = document.getElementById('draftMessage');
+
+            if (!to || !subject || !body) {
+                messageDiv.innerHTML = '<p style="color: red;">Please fill in all required fields.</p>';
+                return;
+            }
+
+            // Show loading state
+            createBtn.disabled = true;
+            createBtn.textContent = '📝 Creating Draft...';
+            messageDiv.innerHTML = '';
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/gmail/drafts/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        to,
+                        subject,
+                        body,
+                        cc: cc || undefined,
+                        bcc: bcc || undefined
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.innerHTML = `
+                        <div class="gmail-connected">
+                            ✅ Draft created successfully!<br>
+                            Draft ID: ${result.data.draftId}<br>
+                            <a href="https://mail.google.com/mail/u/0/#drafts" target="_blank" style="color: #155724;">
+                                📧 Open Gmail Drafts
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('gmailDraftForm').reset();
+                } else {
+                    messageDiv.innerHTML = `<p style="color: red;">❌ Error: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error creating draft:', error);
+                messageDiv.innerHTML = '<p style="color: red;">❌ Failed to create draft. Please try again.</p>';
+            } finally {
+                // Reset button state
+                createBtn.disabled = false;
+                createBtn.textContent = '📝 Create Draft';
+            }
+        });
+
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkGmailConnection();
         });
     </script>
 </body>

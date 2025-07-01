@@ -3,6 +3,7 @@ import authRoutes from './authRoutes';
 import userRoutes from './userRoutes';
 import { UserController } from '../controllers/userController';
 import memoryRoutes from './memoryRoutes';
+import gmailRoutes from './gmailRoutes';
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.get('/health', UserController.healthCheck);
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/memories', memoryRoutes);
+router.use('/gmail', gmailRoutes);
 
 export default router; 

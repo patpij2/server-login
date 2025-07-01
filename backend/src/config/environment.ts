@@ -36,6 +36,13 @@ export const config = {
     apiKey: process.env.OPENROUTER_API_KEY!,
   },
 
+  // 📧 GMAIL SETTINGS
+  gmail: {
+    clientId: process.env.GOOGLE_CLIENT_ID!,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    redirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/gmail-callback.html',
+  },
+
 } as const;
 
 
@@ -46,7 +53,9 @@ const requiredEnvVars = [
   'SUPABASE_SERVICE_ROLE_KEY',
   'JWT_SECRET',
   'SUPERMEMORY_API_KEY',
-  'OPENROUTER_API_KEY'
+  'OPENROUTER_API_KEY',
+  'GOOGLE_CLIENT_ID',
+  'GOOGLE_CLIENT_SECRET'
 ];
 
 for (const envVar of requiredEnvVars) {

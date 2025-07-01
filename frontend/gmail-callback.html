@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gmail Authorization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        .loading {
+            color: #17a2b8;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #17a2b8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="status">
+            <div class="spinner"></div>
+            <span class="loading">Processing Gmail authorization...</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+
+        async function handleCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const error = urlParams.get('error');
+            const state = urlParams.get('state');
+
+            if (error) {
+                document.getElementById('status').innerHTML = `
+                    <span class="error">❌ Authorization failed: ${error}</span>
+                `;
+                setTimeout(() => {
+                    window.close();
+                }, 3000);
+                return;
+            }
+
+            if (!code) {
+                document.getElementById('status').innerHTML = `
+                    <span class="error">❌ No authorization code received</span>
+                `;
+                setTimeout(() => {
+                    window.close();
+                }, 3000);
+                return;
+            }
+
+            try {
+                document.getElementById('status').innerHTML = `
+                    <div class="spinner"></div>
+                    <span class="loading">Exchanging authorization code for tokens...</span>
+                `;
+
+                // Exchange code for tokens using our backend
+                const response = await fetch(`${API_URL}/gmail/callback?code=${code}&state=${state}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('status').innerHTML = `
+                        <span class="success">✅ Gmail connected successfully!</span>
+                    `;
+
+                    // Send success message to parent window
+                    window.opener.postMessage({
+                        type: 'gmail-auth-success'
+                    }, window.location.origin);
+
+                    setTimeout(() => {
+                        window.close();
+                    }, 2000);
+                } else {
+                    document.getElementById('status').innerHTML = `
+                        <span class="error">❌ Failed to complete authorization: ${result.message}</span>
+                    `;
+                    setTimeout(() => {
+                        window.close();
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error handling callback:', error);
+                document.getElementById('status').innerHTML = `
+                    <span class="error">❌ Error processing authorization</span>
+                `;
+                setTimeout(() => {
+                    window.close();
+                }, 3000);
+            }
+        }
+
+        // Handle the callback when page loads
+        window.onload = handleCallback;
+    </script>
+</body>
+</html> 
