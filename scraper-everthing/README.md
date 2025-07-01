@@ -1,6 +1,6 @@
-# Email Scraper API
+# Enhanced Email & Personal Data Scraper API
 
-A production-ready RESTful API for extracting email addresses from websites and marketplaces.
+A production-ready RESTful API for extracting email addresses and comprehensive personal data from websites and marketplaces.
 
 ## 🚀 Quick Start
 
@@ -62,6 +62,7 @@ curl -X POST http://localhost:3001/api/scrape/batch \
 
 ## 📊 Response Format
 
+### Basic Response (Email Only)
 ```json
 {
   "success": true,
@@ -70,6 +71,33 @@ curl -X POST http://localhost:3001/api/scrape/batch \
     "emails": ["contact@example.com", "info@example.com"],
     "totalEmails": 2,
     "pagesVisited": 15,
+    "timestamp": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+### Enhanced Response (With Personal Data)
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://example.com",
+    "emails": ["john@example.com", "jane@example.com"],
+    "totalEmails": 2,
+    "pagesVisited": 15,
+    "personalData": {
+      "john@example.com": {
+        "phones": ["+1-555-123-4567"],
+        "names": ["John Doe"],
+        "addresses": ["123 Main St, City, ST 12345"],
+        "socialMedia": {
+          "linkedin": ["linkedin.com/in/johndoe"]
+        },
+        "jobTitles": ["CEO"],
+        "companies": ["Example Corp"],
+        "sourceUrl": "https://example.com/team"
+      }
+    },
     "timestamp": "2024-01-15T10:30:00.000Z"
   }
 }
@@ -100,6 +128,7 @@ curl -X POST http://localhost:3001/api/scrape/batch \
 - `skipCSS`: boolean (default: false)
 - `skipFonts`: boolean (default: false)
 - `skipMedia`: boolean (default: false)
+- `collectPersonalData`: boolean (default: false) - Enable personal data collection
 
 ## 📁 Project Structure
 
@@ -124,6 +153,9 @@ scraper-everthing/
 - **Email marketing** campaigns
 - **Real estate** agent contact collection
 - **Business development** and networking
+- **Customer profiling** with comprehensive contact data
+- **Sales prospecting** with phone numbers and social profiles
+- **CRM data enrichment** with additional contact information
 
 ## 🔒 Ethics & Compliance
 
@@ -138,6 +170,8 @@ scraper-everthing/
 - **Baldini Realty**: 22 emails from 40 pages
 - **Fast mode**: 3-4x speed improvement
 - **API response**: < 5 seconds for simple requests
+- **Personal data collection**: Phone numbers, names, addresses, social profiles
+- **Data quality**: Validated and cleaned contact information
 
 ## 🚀 Deployment
 
@@ -146,5 +180,11 @@ Ready for deployment to:
 - AWS
 - Docker containers
 - Any cloud platform
+
+## 📚 Documentation
+
+- [API Documentation](API_DOCUMENTATION.md) - Complete API reference
+- [Personal Data Collection](PERSONAL_DATA_COLLECTION.md) - Enhanced features guide
+- [Test Scripts](test-personal-data.js) - Example usage and testing
 
 For detailed API documentation, see [API_DOCUMENTATION.md](API_DOCUMENTATION.md). 

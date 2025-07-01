@@ -406,7 +406,7 @@
             color: #1976d2;
         }
         
-        /* Email Results Table */
+        /* Enhanced Email Results with Personal Data */
         .email-results {
             margin-top: 20px;
         }
@@ -457,6 +457,143 @@
             border-radius: 5px;
             margin: 20px 0;
             text-align: center;
+        }
+        
+        /* Personal Data Display Styles */
+        .personal-data-section {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+        .personal-data-header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .personal-data-header::before {
+            content: "👤 ";
+        }
+        .contact-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #17a2b8;
+        }
+        .contact-email {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #17a2b8;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .contact-data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .data-section {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            border-left: 3px solid #28a745;
+        }
+        .data-section h4 {
+            margin: 0 0 8px 0;
+            color: #155724;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-section.names h4::before { content: "👤 "; }
+        .data-section.phones h4::before { content: "📞 "; }
+        .data-section.addresses h4::before { content: "🏠 "; }
+        .data-section.jobs h4::before { content: "💼 "; }
+        .data-section.companies h4::before { content: "🏢 "; }
+        .data-section.social h4::before { content: "🌐 "; }
+        .data-section.source h4::before { content: "📍 "; }
+        
+        .data-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .data-list li {
+            padding: 4px 0;
+            color: #333;
+            font-size: 0.9em;
+        }
+        .data-list li:not(:last-child) {
+            border-bottom: 1px solid #e9ecef;
+        }
+        .social-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .social-link {
+            background-color: #007bff;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .social-link:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+        .social-link.linkedin { background-color: #0077b5; }
+        .social-link.twitter { background-color: #1da1f2; }
+        .social-link.facebook { background-color: #4267b2; }
+        .social-link.instagram { background-color: #e4405f; }
+        .social-link.youtube { background-color: #ff0000; }
+        
+        .data-summary {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .stat-item {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+        .stat-label {
+            font-size: 0.8em;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        
+        .no-personal-data {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-style: italic;
+            background-color: white;
+            border-radius: 5px;
         }
         
         /* Gmail Integration Styles */
@@ -627,9 +764,18 @@
             </div>
 
             <div class="email-scraping-section">
-                <h2>Email Scraper</h2>
+                <h2>Email & Personal Data Scraper</h2>
                 <form id="emailScrapingForm">
                     <input type="url" id="websiteUrl" placeholder="Enter website URL to scrape for emails (e.g., https://example.com)" required>
+                    <div style="margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="collectPersonalData" checked style="margin-right: 10px;">
+                            <span>🔍 Collect personal data (names, phones, addresses, social media, job titles)</span>
+                        </label>
+                        <div style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">
+                            When enabled, the scraper will collect comprehensive contact information beyond just email addresses.
+                        </div>
+                    </div>
                     <button type="submit" id="scrapeButton">🔍 Start Scraping</button>
                 </form>
                 <div id="emailScrapingResults">
@@ -1052,6 +1198,9 @@
             `;
 
             try {
+                // Get personal data collection preference
+                const collectPersonalData = document.getElementById('collectPersonalData').checked;
+                
                 // Use Server-Sent Events for real-time progress
                 const eventSource = new EventSource(`${SCRAPER_URL}/api/scrape/fast/progress?url=${encodeURIComponent(url)}`);
                 
@@ -1061,7 +1210,12 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ url: url }),
+                    body: JSON.stringify({ 
+                        url: url,
+                        options: {
+                            collectPersonalData: collectPersonalData
+                        }
+                    }),
                 });
 
                 if (!response.ok) {
@@ -1120,9 +1274,20 @@
                     break;
                     
                 case 'emails_found':
+                    let personalDataInfo = '';
+                    if (data.personalData) {
+                        const personalStats = {
+                            names: data.personalData.names ? data.personalData.names.length : 0,
+                            phones: data.personalData.phones ? data.personalData.phones.length : 0,
+                            addresses: data.personalData.addresses ? data.personalData.addresses.length : 0,
+                            social: data.personalData.socialMedia ? Object.keys(data.personalData.socialMedia).length : 0
+                        };
+                        personalDataInfo = ` | 👤 ${personalStats.names} names, 📞 ${personalStats.phones} phones, 🏠 ${personalStats.addresses} addresses, 🌐 ${personalStats.social} social profiles`;
+                    }
+                    
                     progressUpdates.push({
                         type: 'emails-found',
-                        message: `📧 Found ${data.emails.length} email(s) on ${data.url}: ${data.emails.join(', ')}`
+                        message: `📧 Found ${data.emails.length} email(s) on ${data.url}: ${data.emails.join(', ')}${personalDataInfo}`
                     });
                     currentStats.emailsFound += data.emails.length;
                     currentStats.totalEmails = data.totalEmails;
@@ -1184,7 +1349,7 @@
             progressUpdatesDiv.scrollTop = progressUpdatesDiv.scrollHeight;
         }
 
-        // Function to display email results in a table
+        // Function to display email results with personal data
         function displayEmailResults(data) {
             const resultsDiv = document.getElementById('emailScrapingResults');
             
@@ -1212,6 +1377,13 @@
                 </tr>
             `).join('');
 
+            let personalDataSection = '';
+            
+            // Check if personal data is available
+            if (data.personalData && Object.keys(data.personalData).length > 0) {
+                personalDataSection = generatePersonalDataSection(data.personalData);
+            }
+
             resultsDiv.innerHTML = `
                 <div class="email-results">
                     <div class="email-count">
@@ -1232,6 +1404,214 @@
                     </table>
                     <div style="text-align: center; margin-top: 15px; color: #6c757d;">
                         Pages visited: ${data.pagesVisited || 0} | Mode: ${data.mode || 'standard'}
+                    </div>
+                    ${personalDataSection}
+                </div>
+            `;
+        }
+
+        // Function to generate personal data section
+        function generatePersonalDataSection(personalData) {
+            const emails = Object.keys(personalData);
+            
+            if (emails.length === 0) {
+                return `
+                    <div class="personal-data-section">
+                        <div class="no-personal-data">
+                            📭 No personal data found for the scraped emails
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Calculate summary statistics
+            const summary = calculatePersonalDataSummary(personalData);
+            
+            // Generate contact cards
+            const contactCards = emails.map(email => generateContactCard(email, personalData[email])).join('');
+
+            return `
+                <div class="personal-data-section">
+                    <div class="personal-data-header">Personal Data Collected</div>
+                    
+                    <div class="data-summary">
+                        <div>📊 Data Summary</div>
+                        <div class="summary-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalContacts}</div>
+                                <div class="stat-label">Contacts</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalNames}</div>
+                                <div class="stat-label">Names</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalPhones}</div>
+                                <div class="stat-label">Phones</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalAddresses}</div>
+                                <div class="stat-label">Addresses</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalSocialProfiles}</div>
+                                <div class="stat-label">Social Profiles</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalJobTitles}</div>
+                                <div class="stat-label">Job Titles</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${contactCards}
+                </div>
+            `;
+        }
+
+        // Function to calculate personal data summary
+        function calculatePersonalDataSummary(personalData) {
+            const emails = Object.keys(personalData);
+            let totalNames = 0;
+            let totalPhones = 0;
+            let totalAddresses = 0;
+            let totalSocialProfiles = 0;
+            let totalJobTitles = 0;
+            let totalCompanies = 0;
+
+            emails.forEach(email => {
+                const data = personalData[email];
+                totalNames += data.names ? data.names.length : 0;
+                totalPhones += data.phones ? data.phones.length : 0;
+                totalAddresses += data.addresses ? data.addresses.length : 0;
+                totalJobTitles += data.jobTitles ? data.jobTitles.length : 0;
+                totalCompanies += data.companies ? data.companies.length : 0;
+                
+                if (data.socialMedia) {
+                    Object.values(data.socialMedia).forEach(profiles => {
+                        totalSocialProfiles += profiles.length;
+                    });
+                }
+            });
+
+            return {
+                totalContacts: emails.length,
+                totalNames,
+                totalPhones,
+                totalAddresses,
+                totalSocialProfiles,
+                totalJobTitles,
+                totalCompanies
+            };
+        }
+
+        // Function to generate individual contact card
+        function generateContactCard(email, data) {
+            const sections = [];
+
+            // Names section
+            if (data.names && data.names.length > 0) {
+                sections.push(`
+                    <div class="data-section names">
+                        <h4>Names</h4>
+                        <ul class="data-list">
+                            ${data.names.map(name => `<li>${name}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Phone numbers section
+            if (data.phones && data.phones.length > 0) {
+                sections.push(`
+                    <div class="data-section phones">
+                        <h4>Phone Numbers</h4>
+                        <ul class="data-list">
+                            ${data.phones.map(phone => `<li>${phone}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Addresses section
+            if (data.addresses && data.addresses.length > 0) {
+                sections.push(`
+                    <div class="data-section addresses">
+                        <h4>Addresses</h4>
+                        <ul class="data-list">
+                            ${data.addresses.map(address => `<li>${address}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Job titles section
+            if (data.jobTitles && data.jobTitles.length > 0) {
+                sections.push(`
+                    <div class="data-section jobs">
+                        <h4>Job Titles</h4>
+                        <ul class="data-list">
+                            ${data.jobTitles.map(title => `<li>${title}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Companies section
+            if (data.companies && data.companies.length > 0) {
+                sections.push(`
+                    <div class="data-section companies">
+                        <h4>Companies</h4>
+                        <ul class="data-list">
+                            ${data.companies.map(company => `<li>${company}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Social media section
+            if (data.socialMedia && Object.keys(data.socialMedia).length > 0) {
+                const socialLinks = [];
+                Object.entries(data.socialMedia).forEach(([platform, profiles]) => {
+                    profiles.forEach(profile => {
+                        const platformClass = platform.toLowerCase();
+                        socialLinks.push(`
+                            <a href="https://${profile}" target="_blank" class="social-link ${platformClass}">
+                                ${platform} - ${profile.split('/').pop()}
+                            </a>
+                        `);
+                    });
+                });
+
+                if (socialLinks.length > 0) {
+                    sections.push(`
+                        <div class="data-section social">
+                            <h4>Social Media</h4>
+                            <div class="social-links">
+                                ${socialLinks.join('')}
+                            </div>
+                        </div>
+                    `);
+                }
+            }
+
+            // Source URL section
+            if (data.sourceUrl) {
+                sections.push(`
+                    <div class="data-section source">
+                        <h4>Source</h4>
+                        <ul class="data-list">
+                            <li><a href="${data.sourceUrl}" target="_blank">${data.sourceUrl}</a></li>
+                        </ul>
+                    </div>
+                `);
+            }
+
+            return `
+                <div class="contact-card">
+                    <div class="contact-email">📧 ${email}</div>
+                    <div class="contact-data-grid">
+                        ${sections.join('')}
                     </div>
                 </div>
             `;

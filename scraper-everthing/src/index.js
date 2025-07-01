@@ -57,7 +57,8 @@ app.post('/api/scrape', async (req, res) => {
             skipCSS: options.skipCSS !== false,
             skipFonts: options.skipFonts !== false,
             skipMedia: options.skipMedia !== false,
-            timeout: options.timeout || 30000
+            timeout: options.timeout || 30000,
+            collectPersonalData: options.collectPersonalData !== false
         };
 
         logger.info(`Starting scraping for URL: ${url}`, { options: scrapingOptions });
@@ -83,6 +84,7 @@ app.post('/api/scrape', async (req, res) => {
                 emails: result.emails,
                 totalEmails: result.emails.length,
                 pagesVisited: result.pagesVisited,
+                personalData: result.personalData,
                 timestamp: new Date().toISOString()
             }
         });
@@ -133,6 +135,7 @@ app.post('/api/scrape/fast/progress', async (req, res) => {
             skipFonts: true,
             skipMedia: true,
             timeout: 15000,
+            collectPersonalData: req.body.options?.collectPersonalData !== false, // Default to true unless explicitly disabled
             onProgress: (progress) => {
                 // Send progress update to client
                 res.write(`data: ${JSON.stringify(progress)}\n\n`);
@@ -152,6 +155,7 @@ app.post('/api/scrape/fast/progress', async (req, res) => {
                 emails: result.emails,
                 totalEmails: result.emails.length,
                 pagesVisited: result.pagesVisited,
+                personalData: result.personalData,
                 mode: 'fast',
                 timestamp: new Date().toISOString()
             }
@@ -205,7 +209,8 @@ app.post('/api/scrape/fast', async (req, res) => {
             skipCSS: true,
             skipFonts: true,
             skipMedia: true,
-            timeout: 15000
+            timeout: 15000,
+            collectPersonalData: true
         };
 
         const scraper = new EmailScraper(fastOptions);
@@ -224,6 +229,7 @@ app.post('/api/scrape/fast', async (req, res) => {
                 emails: result.emails,
                 totalEmails: result.emails.length,
                 pagesVisited: result.pagesVisited,
+                personalData: result.personalData,
                 mode: 'fast',
                 timestamp: new Date().toISOString()
             }
@@ -272,7 +278,8 @@ app.post('/api/scrape/batch', async (req, res) => {
             skipCSS: options.skipCSS !== false,
             skipFonts: options.skipFonts !== false,
             skipMedia: options.skipMedia !== false,
-            timeout: options.timeout || 30000
+            timeout: options.timeout || 30000,
+            collectPersonalData: options.collectPersonalData !== false
         };
 
         for (const url of urls) {
@@ -286,7 +293,8 @@ app.post('/api/scrape/batch', async (req, res) => {
                     success: true,
                     emails: result.emails,
                     totalEmails: result.emails.length,
-                    pagesVisited: result.pagesVisited
+                    pagesVisited: result.pagesVisited,
+                    personalData: result.personalData
                 });
 
                 logger.info(`Completed scraping for ${url}`, { emailsFound: result.emails.length });
