@@ -33,10 +33,14 @@ class EmailScraper {
     // Email regex patterns for different formats
     getEmailPatterns() {
         return [
-            /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-            /[a-zA-Z0-9._%+-]+\s*\[at\]\s*[a-zA-Z0-9.-]+\s*\[dot\]\s*[a-zA-Z]{2,}/g,
-            /[a-zA-Z0-9._%+-]+\s*\(at\)\s*[a-zA-Z0-9.-]+\s*\(dot\)\s*[a-zA-Z]{2,}/g,
-            /[a-zA-Z0-9._%+-]+\s*@\s*[a-zA-Z0-9.-]+\s*\.\s*[a-zA-Z]{2,}/g
+            // Standard email format with word boundaries
+            /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/g,
+            // Obfuscated emails with [at] and [dot]
+            /\b[a-zA-Z0-9._%+-]+\s*\[at\]\s*[a-zA-Z0-9.-]+\s*\[dot\]\s*[a-zA-Z]{2,}\b/g,
+            // Obfuscated emails with (at) and (dot)
+            /\b[a-zA-Z0-9._%+-]+\s*\(at\)\s*[a-zA-Z0-9.-]+\s*\(dot\)\s*[a-zA-Z]{2,}\b/g,
+            // Emails with spaces around @ and .
+            /\b[a-zA-Z0-9._%+-]+\s*@\s*[a-zA-Z0-9.-]+\s*\.\s*[a-zA-Z]{2,}\b/g
         ];
     }
 
@@ -52,7 +56,42 @@ class EmailScraper {
             .toLowerCase()
             .trim();
 
-        // Basic email validation
+        // Remove specific problematic patterns that are clearly not part of valid emails
+        // This handles cases like "help@mysite.ai.26.sms" -> "help@mysite.ai"
+        
+        // Pattern 1: Remove .number.letters at the end (like .26.sms)
+        cleaned = cleaned.replace(/\.\d+\.\w+$/, '');
+        
+        // Pattern 2: Remove .letters.letters at the end if the second part is short (like .com.extra)
+        cleaned = cleaned.replace(/\.\w+\.\w+$/, (match) => {
+            const parts = match.split('.');
+            if (parts[2] && parts[2].length <= 4) {
+                return '.' + parts[1]; // Keep only the first part
+            }
+            return match; // Keep original if it might be valid
+        });
+        
+        // Pattern 3: Remove trailing .letters if preceded by a valid TLD
+        const validTLDs = ['com', 'org', 'net', 'edu', 'gov', 'mil', 'int', 'ai', 'io', 'co', 'uk', 'us', 'ca', 'au', 'de', 'fr', 'jp', 'cn', 'in', 'br', 'ru', 'it', 'nl', 'se', 'no', 'dk', 'fi', 'ie', 'at', 'ch', 'pl', 'pt', 'es', 'cz', 'hu', 'ro', 'bg', 'hr', 'rs', 'ba', 'si', 'mk', 'me', 'al', 'ad', 'li', 'mc', 'sm', 'va', 'mt', 'cy', 'gr', 'ee', 'lv', 'lt', 'lu', 'sk'];
+        
+        const domainMatch = cleaned.match(/@([a-zA-Z0-9.-]+)$/);
+        if (domainMatch) {
+            const domain = domainMatch[1];
+            const domainParts = domain.split('.');
+            
+            if (domainParts.length > 2) {
+                const lastPart = domainParts[domainParts.length - 1];
+                const secondLastPart = domainParts[domainParts.length - 2];
+                
+                // If the second-to-last part is a valid TLD and the last part is short, remove the last part
+                if (validTLDs.includes(secondLastPart.toLowerCase()) && lastPart.length <= 4) {
+                    const newDomain = domainParts.slice(0, -1).join('.');
+                    cleaned = cleaned.replace(domain, newDomain);
+                }
+            }
+        }
+
+        // Basic email validation with stricter domain validation
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(cleaned) ? cleaned : null;
     }

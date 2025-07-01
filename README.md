@@ -1,6 +1,6 @@
 # 🔐 Professional Login System
 
-A professional login system with separated frontend and backend architecture. This demonstrates modern web development practices with independent frontend and backend services.
+A professional login system with separated frontend and backend architecture, featuring Gmail integration and memory management. This demonstrates modern web development practices with independent frontend and backend services.
 
 ## 🏗️ Architecture
 
@@ -8,12 +8,24 @@ A professional login system with separated frontend and backend architecture. Th
 server-login/
 ├── frontend/                 # Frontend application (Port 3000)
 │   ├── index.html           # Login interface
+│   ├── dashboard.html       # User dashboard with Gmail integration
+│   ├── gmail-callback.html  # Gmail OAuth callback
 │   └── package.json         # Frontend dependencies
 ├── backend/                  # Backend API (Port 8000)
 │   ├── src/
+│   │   ├── config/          # Configuration files
+│   │   ├── controllers/     # Request handlers
+│   │   ├── middleware/      # Authentication & validation
+│   │   ├── models/          # Type definitions
+│   │   ├── routes/          # API endpoints
+│   │   ├── services/        # Business logic
+│   │   ├── utils/           # Helper functions
 │   │   └── index.ts         # API server
+│   ├── scripts/             # Database setup scripts
+│   ├── supabase_migrations/ # Database migrations
 │   ├── package.json         # Backend dependencies
 │   └── tsconfig.json        # TypeScript config
+├── GMAIL_INTEGRATION_GUIDE.md # Complete Gmail setup guide
 └── README.md                # This file
 ```
 
@@ -22,6 +34,7 @@ server-login/
 ### Prerequisites
 - Node.js (version 14 or higher)
 - npm (comes with Node.js)
+- Supabase account (for database)
 
 ### 1. Start the Backend API
 
@@ -49,6 +62,7 @@ The frontend will start on `http://localhost:3000`
 2. You should see a connection status indicator
 3. Register a new user
 4. Login with the registered user
+5. Access the dashboard with Gmail integration
 
 ## 🔧 Available Scripts
 
@@ -67,24 +81,46 @@ The frontend will start on `http://localhost:3000`
 ### Backend API (Port 8000)
 The backend provides these API endpoints:
 
-- **POST /api/register** - Create a new user account
-- **POST /api/login** - Authenticate existing user
+#### Authentication
+- **POST /api/auth/register** - Create a new user account
+- **POST /api/auth/login** - Authenticate existing user
+- **GET /api/auth/dashboard** - Get user dashboard data
+
+#### User Management
 - **GET /api/users** - List all users (for testing)
+- **GET /api/users/:id** - Get specific user
+
+#### Memory Management
+- **POST /api/memories/add** - Add a new memory
+- **POST /api/memories/search** - Search memories
+- **GET /api/memories** - Get user's memories
+
+#### Gmail Integration
+- **GET /api/gmail/auth/url** - Get OAuth2 authorization URL
+- **GET /api/gmail/callback** - Handle OAuth2 callback
+- **POST /api/gmail/drafts/create** - Create Gmail draft
+- **GET /api/gmail/check** - Check Gmail connection status
+- **DELETE /api/gmail/disconnect** - Disconnect Gmail account
+
+#### System
 - **GET /api/health** - Health check
 
 ### Frontend (Port 3000)
-A simple web interface with:
-- Login form
-- Registration form
-- Connection status indicator
+A modern web interface with:
+- Login and registration forms
+- User dashboard with multiple features
+- Gmail integration for creating drafts
+- Memory management system
 - Real-time feedback messages
 - API calls to backend
 
 ### Security Features
 - **Password Hashing**: Passwords are hashed using bcrypt before storage
+- **JWT Authentication**: Secure token-based authentication
 - **CORS Configuration**: Backend only accepts requests from frontend domain
-- **Input Validation**: Basic validation for email and password fields
+- **Input Validation**: Comprehensive validation for all inputs
 - **Error Handling**: Proper error responses for various scenarios
+- **Row Level Security**: Database-level security with Supabase RLS
 
 ## 🌐 Network Flow
 
@@ -94,7 +130,11 @@ Browser (localhost:3000)
 Frontend Server (localhost:3000)
     ↓ API Call
 Backend API (localhost:8000)
+    ↓ Database Query
+Supabase Database
     ↓ Response
+Backend API (localhost:8000)
+    ↓ API Response
 Frontend Server (localhost:3000)
     ↓ Display
 Browser (localhost:3000)
@@ -116,7 +156,12 @@ Browser (localhost:3000)
    - Enter the same email and password
    - Click "Login"
 
-4. **Test error cases:**
+4. **Test Dashboard Features:**
+   - Memory management: Add and search memories
+   - Gmail integration: Connect Gmail and create drafts
+   - User profile: View user information
+
+5. **Test error cases:**
    - Try registering with the same email twice
    - Try logging in with wrong credentials
    - Try submitting empty forms
@@ -128,6 +173,7 @@ Browser (localhost:3000)
 - **API Design**: RESTful API endpoints with proper HTTP methods
 - **CORS**: Cross-Origin Resource Sharing configuration
 - **Port Management**: Different ports for different services
+- **Database Integration**: Supabase with Row Level Security
 
 ### TypeScript Concepts
 - **Type Annotations**: Request/response types
@@ -136,7 +182,7 @@ Browser (localhost:3000)
 - **Module System**: Import/export statements
 
 ### Express.js Concepts
-- **Middleware**: CORS, JSON parsing
+- **Middleware**: CORS, JSON parsing, authentication
 - **Route Handlers**: API endpoint definitions
 - **Request/Response**: HTTP request handling
 - **Status Codes**: Proper HTTP status codes
@@ -146,6 +192,11 @@ Browser (localhost:3000)
 - **DOM Manipulation**: Updating UI based on API responses
 - **Event Handling**: Form submissions and user interactions
 - **Error Handling**: User-friendly error messages
+
+### Gmail Integration
+- **OAuth2 Flow**: Secure authentication with Google
+- **API Integration**: Using Gmail API for draft creation
+- **Token Management**: Secure storage and refresh of access tokens
 
 ## 🔄 Development Workflow
 
@@ -166,6 +217,7 @@ Browser (localhost:3000)
 - Check if port 8000 is already in use
 - Make sure all dependencies are installed
 - Check TypeScript compilation errors
+- Verify environment variables are set
 
 **Frontend won't start:**
 - Check if port 3000 is already in use
@@ -176,29 +228,35 @@ Browser (localhost:3000)
 - Check CORS configuration in backend
 - Check browser console for errors
 
-**API calls failing:**
-- Verify API endpoints are correct
-- Check network tab in browser dev tools
-- Ensure backend is responding to health check
+**Gmail integration issues:**
+- See [GMAIL_INTEGRATION_GUIDE.md](GMAIL_INTEGRATION_GUIDE.md) for detailed setup and troubleshooting
+
+**Database connection issues:**
+- Verify Supabase credentials in environment variables
+- Check if database tables are created
+- Run database setup scripts if needed
 
 ## 🔄 Next Steps
 
 Once you understand this setup, you can enhance it with:
 
-1. **Database Integration**: Replace in-memory storage with PostgreSQL/MongoDB
-2. **JWT Tokens**: Add session management and authentication
-3. **React/Vue Frontend**: Replace vanilla HTML with a modern framework
-4. **Environment Variables**: Use .env files for configuration
-5. **Docker**: Containerize both frontend and backend
-6. **Testing**: Add unit and integration tests
-7. **CI/CD**: Set up automated deployment pipelines
+1. **Additional Integrations**: Slack, Discord, or other APIs
+2. **React/Vue Frontend**: Replace vanilla HTML with a modern framework
+3. **Docker**: Containerize both frontend and backend
+4. **Testing**: Add unit and integration tests
+5. **CI/CD**: Set up automated deployment pipelines
+6. **Monitoring**: Add logging and monitoring tools
+7. **Caching**: Implement Redis for performance
+8. **File Upload**: Add file upload capabilities
 
 ## 📖 Additional Resources
 
 - [Express.js Documentation](https://expressjs.com/)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Fetch API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
-- [CORS Documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+- [Supabase Documentation](https://supabase.com/docs)
+- [Gmail API Documentation](https://developers.google.com/gmail/api)
+- [GMAIL_INTEGRATION_GUIDE.md](GMAIL_INTEGRATION_GUIDE.md) - Complete Gmail setup guide
 
 ---
 
