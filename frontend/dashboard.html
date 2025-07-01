@@ -396,6 +396,15 @@
         .progress-item.page-blocked {
             color: #ffc107;
         }
+        .progress-item.url-filtered {
+            color: #6c757d;
+        }
+        .progress-item.complete {
+            color: #28a745;
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            font-weight: bold;
+        }
         .progress-stats {
             background-color: #e3f2fd;
             padding: 10px;
@@ -513,12 +522,15 @@
             letter-spacing: 0.5px;
         }
         .data-section.names h4::before { content: "👤 "; }
-        .data-section.phones h4::before { content: "📞 "; }
         .data-section.addresses h4::before { content: "🏠 "; }
         .data-section.jobs h4::before { content: "💼 "; }
         .data-section.companies h4::before { content: "🏢 "; }
         .data-section.social h4::before { content: "🌐 "; }
         .data-section.source h4::before { content: "📍 "; }
+        .data-section.industries h4::before { content: "🏭 "; }
+        .data-section.seniority h4::before { content: "📈 "; }
+        .data-section.departments h4::before { content: "🏢 "; }
+        .data-section.keywords h4::before { content: "🏷️ "; }
         
         .data-list {
             margin: 0;
@@ -770,11 +782,27 @@
                     <div style="margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
                             <input type="checkbox" id="collectPersonalData" checked style="margin-right: 10px;">
-                            <span>🔍 Collect personal data (names, phones, addresses, social media, job titles)</span>
+                            <span>🔍 Collect personal data (names, addresses, social media, job titles)</span>
                         </label>
                         <div style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">
                             When enabled, the scraper will collect comprehensive contact information beyond just email addresses.
                         </div>
+                    </div>
+                    <div style="margin: 15px 0; padding: 15px; background-color: #e8f5e8; border-radius: 5px; border: 1px solid #c3e6c3;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="useAICategorization" checked style="margin-right: 10px;">
+                            <span>🤖 AI-powered data categorization (industries, seniority, departments)</span>
+                        </label>
+                        <div style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">
+                            Uses Google Gemini Flash via OpenRouter to categorize and enrich contact data with industries, seniority levels, and departments.
+                        </div>
+                    </div>
+                    <div style="margin: 15px 0; padding: 15px; background-color: #eaf0fa; border-radius: 5px; border: 1px solid #bcd0ee;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" id="restrictToPathEnabled" style="margin-right: 10px;">
+                            <span>Restrict scraping to URLs starting with:</span>
+                        </label>
+                        <input type="text" id="restrictToPath" placeholder="e.g. https://www.intero.com/roster/agents" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 0.9em; margin-top: 8px;" disabled>
                     </div>
                     <button type="submit" id="scrapeButton">🔍 Start Scraping</button>
                 </form>
@@ -1200,11 +1228,13 @@
             try {
                 // Get personal data collection preference
                 const collectPersonalData = document.getElementById('collectPersonalData').checked;
+                const useAICategorization = document.getElementById('useAICategorization').checked;
                 
-                // Use Server-Sent Events for real-time progress
-                const eventSource = new EventSource(`${SCRAPER_URL}/api/scrape/fast/progress?url=${encodeURIComponent(url)}`);
+                // Get restrictToPath preference
+                const restrictToPathEnabled = document.getElementById('restrictToPathEnabled').checked;
+                const restrictToPath = restrictToPathEnabled ? document.getElementById('restrictToPath').value.trim() : '';
                 
-                // Send the actual request
+                // Send the request with options and handle Server-Sent Events
                 const response = await fetch(`${SCRAPER_URL}/api/scrape/fast/progress`, {
                     method: 'POST',
                     headers: {
@@ -1213,7 +1243,9 @@
                     body: JSON.stringify({ 
                         url: url,
                         options: {
-                            collectPersonalData: collectPersonalData
+                            collectPersonalData: collectPersonalData,
+                            useAICategorization: useAICategorization,
+                            restrictToPath: restrictToPath
                         }
                     }),
                 });
@@ -1222,6 +1254,7 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
+                // Handle Server-Sent Events from the response
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
 
@@ -1236,6 +1269,7 @@
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
+                                console.log('Progress update:', data);
                                 handleProgressUpdate(data, progressUpdates, currentStats, resultsDiv);
                             } catch (e) {
                                 console.error('Error parsing progress data:', e);
@@ -1275,14 +1309,19 @@
                     
                 case 'emails_found':
                     let personalDataInfo = '';
-                    if (data.personalData) {
-                        const personalStats = {
-                            names: data.personalData.names ? data.personalData.names.length : 0,
-                            phones: data.personalData.phones ? data.personalData.phones.length : 0,
-                            addresses: data.personalData.addresses ? data.personalData.addresses.length : 0,
-                            social: data.personalData.socialMedia ? Object.keys(data.personalData.socialMedia).length : 0
-                        };
-                        personalDataInfo = ` | 👤 ${personalStats.names} names, 📞 ${personalStats.phones} phones, 🏠 ${personalStats.addresses} addresses, 🌐 ${personalStats.social} social profiles`;
+                                            if (data.personalData) {
+                            const personalStats = {
+                                names: data.personalData.names ? data.personalData.names.length : 0,
+                                keywords: data.personalData.keywords ? data.personalData.keywords.length : 0,
+                                addresses: data.personalData.addresses ? data.personalData.addresses.length : 0,
+                                social: data.personalData.socialMedia ? Object.keys(data.personalData.socialMedia).length : 0,
+                                industries: data.personalData.industries ? data.personalData.industries.length : 0,
+                                seniority: data.personalData.seniority ? data.personalData.seniority.length : 0
+                            };
+                            personalDataInfo = ` | 👤 ${personalStats.names} names, 🏷️ ${personalStats.keywords} keywords, 🏠 ${personalStats.addresses} addresses, 🌐 ${personalStats.social} social profiles`;
+                        if (personalStats.industries > 0 || personalStats.seniority > 0) {
+                            personalDataInfo += `, 🤖 AI: ${personalStats.industries} industries, ${personalStats.seniority} seniority levels`;
+                        }
                     }
                     
                     progressUpdates.push({
@@ -1315,17 +1354,37 @@
                     });
                     break;
                     
+                case 'url_filtered':
+                    progressUpdates.push({
+                        type: 'url-filtered',
+                        message: `🚫 Skipped ${data.url}: ${data.reason}`
+                    });
+                    break;
+                    
                 case 'complete':
+                    console.log('Scraping completed, displaying results:', data);
+                    // Add completion message to progress
+                    progressUpdates.push({
+                        type: 'complete',
+                        message: `🎉 Scraping completed! Found ${data.data.totalEmails} emails from ${data.data.pagesVisited} pages`
+                    });
                     // Show final results
                     displayEmailResults(data.data);
+                    // Re-enable the form
+                    document.getElementById('scrapeButton').disabled = false;
+                    document.getElementById('scrapeButton').textContent = '🔍 Start Scraping';
                     return;
                     
                 case 'error':
+                    console.log('Scraping error:', data);
                     resultsDiv.innerHTML = `
                         <div class="scraping-error">
                             ❌ Error: ${data.error || data.message || 'Failed to scrape emails'}
                         </div>
                     `;
+                    // Re-enable the form
+                    document.getElementById('scrapeButton').disabled = false;
+                    document.getElementById('scrapeButton').textContent = '🔍 Start Scraping';
                     return;
             }
 
@@ -1441,14 +1500,14 @@
                                 <div class="stat-number">${summary.totalContacts}</div>
                                 <div class="stat-label">Contacts</div>
                             </div>
-                            <div class="stat-item">
-                                <div class="stat-number">${summary.totalNames}</div>
-                                <div class="stat-label">Names</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">${summary.totalPhones}</div>
-                                <div class="stat-label">Phones</div>
-                            </div>
+                                                    <div class="stat-item">
+                            <div class="stat-number">${summary.totalNames}</div>
+                            <div class="stat-label">Names</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${summary.totalKeywords}</div>
+                            <div class="stat-label">Keywords</div>
+                        </div>
                             <div class="stat-item">
                                 <div class="stat-number">${summary.totalAddresses}</div>
                                 <div class="stat-label">Addresses</div>
@@ -1460,6 +1519,18 @@
                             <div class="stat-item">
                                 <div class="stat-number">${summary.totalJobTitles}</div>
                                 <div class="stat-label">Job Titles</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalIndustries}</div>
+                                <div class="stat-label">Industries</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalSeniority}</div>
+                                <div class="stat-label">Seniority</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">${summary.totalDepartments}</div>
+                                <div class="stat-label">Departments</div>
                             </div>
                         </div>
                     </div>
@@ -1473,19 +1544,25 @@
         function calculatePersonalDataSummary(personalData) {
             const emails = Object.keys(personalData);
             let totalNames = 0;
-            let totalPhones = 0;
+            let totalKeywords = 0;
             let totalAddresses = 0;
             let totalSocialProfiles = 0;
             let totalJobTitles = 0;
             let totalCompanies = 0;
+            let totalIndustries = 0;
+            let totalSeniority = 0;
+            let totalDepartments = 0;
 
             emails.forEach(email => {
                 const data = personalData[email];
                 totalNames += data.names ? data.names.length : 0;
-                totalPhones += data.phones ? data.phones.length : 0;
+                totalKeywords += data.keywords ? data.keywords.length : 0;
                 totalAddresses += data.addresses ? data.addresses.length : 0;
                 totalJobTitles += data.jobTitles ? data.jobTitles.length : 0;
                 totalCompanies += data.companies ? data.companies.length : 0;
+                totalIndustries += data.industries ? data.industries.length : 0;
+                totalSeniority += data.seniority ? data.seniority.length : 0;
+                totalDepartments += data.departments ? data.departments.length : 0;
                 
                 if (data.socialMedia) {
                     Object.values(data.socialMedia).forEach(profiles => {
@@ -1497,11 +1574,14 @@
             return {
                 totalContacts: emails.length,
                 totalNames,
-                totalPhones,
+                totalKeywords,
                 totalAddresses,
                 totalSocialProfiles,
                 totalJobTitles,
-                totalCompanies
+                totalCompanies,
+                totalIndustries,
+                totalSeniority,
+                totalDepartments
             };
         }
 
@@ -1521,13 +1601,49 @@
                 `);
             }
 
-            // Phone numbers section
-            if (data.phones && data.phones.length > 0) {
+            // Keywords section
+            if (data.keywords && data.keywords.length > 0) {
                 sections.push(`
-                    <div class="data-section phones">
-                        <h4>Phone Numbers</h4>
+                    <div class="data-section keywords">
+                        <h4>Keywords</h4>
                         <ul class="data-list">
-                            ${data.phones.map(phone => `<li>${phone}</li>`).join('')}
+                            ${data.keywords.slice(0, 30).map(keyword => `<li>${keyword}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Industries section (AI-categorized)
+            if (data.industries && data.industries.length > 0) {
+                sections.push(`
+                    <div class="data-section industries">
+                        <h4>Industries</h4>
+                        <ul class="data-list">
+                            ${data.industries.map(industry => `<li>${industry}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Seniority section (AI-categorized)
+            if (data.seniority && data.seniority.length > 0) {
+                sections.push(`
+                    <div class="data-section seniority">
+                        <h4>Seniority</h4>
+                        <ul class="data-list">
+                            ${data.seniority.map(level => `<li>${level}</li>`).join('')}
+                        </ul>
+                    </div>
+                `);
+            }
+
+            // Departments section (AI-categorized)
+            if (data.departments && data.departments.length > 0) {
+                sections.push(`
+                    <div class="data-section departments">
+                        <h4>Departments</h4>
+                        <ul class="data-list">
+                            ${data.departments.map(dept => `<li>${dept}</li>`).join('')}
                         </ul>
                     </div>
                 `);
@@ -1935,6 +2051,11 @@
             return `http://${currentHost}:3001`;
         }
         const SCRAPER_URL = getScraperURL();
+
+        // Enable/disable restrictToPath input based on checkbox
+        document.getElementById('restrictToPathEnabled').addEventListener('change', function() {
+            document.getElementById('restrictToPath').disabled = !this.checked;
+        });
     </script>
 </body>
 </html>

@@ -21,6 +21,9 @@ class EmailScraper {
             skipMedia: options.skipMedia !== false,
             onProgress: options.onProgress || null,
             collectPersonalData: options.collectPersonalData !== false,
+            useAICategorization: options.useAICategorization !== false, // Enable AI categorization
+            openRouterApiKey: options.openRouterApiKey || process.env.OPENROUTER_API_KEY, // OpenRouter API key
+            restrictToPath: options.restrictToPath || '',
             ...options
         };
         
@@ -133,7 +136,10 @@ class EmailScraper {
             'Search Results', 'Page Title', 'Meta Description', 'Alt Text',
             'Click Here', 'Read More', 'Learn More', 'Get Started',
             'Sign Up', 'Log In', 'Subscribe', 'Newsletter', 'Blog Post',
-            'Product Name', 'Company Name', 'Brand Name', 'Service Name'
+            'Product Name', 'Company Name', 'Brand Name', 'Service Name',
+            'About Our', 'Our Services', 'Contact Information', 'Team Members',
+            'Leadership Team', 'Navigation Menu', 'Main Menu', 'Side Menu',
+            'Top Menu', 'Bottom Menu', 'Footer Menu', 'Header Menu'
         ];
         
         if (falsePositives.some(fp => name.toLowerCase().includes(fp.toLowerCase()))) {
@@ -153,6 +159,12 @@ class EmailScraper {
         
         // Check for reasonable word lengths
         if (!words.every(word => word.length >= 2 && word.length <= 20)) {
+            return false;
+        }
+        
+        // Additional checks for navigation/common words
+        const navigationWords = ['About', 'Contact', 'Home', 'Menu', 'Navigation', 'Services', 'Products', 'Company', 'Team', 'Our', 'The', 'And', 'Or', 'But', 'For', 'With', 'From', 'To', 'In', 'On', 'At', 'By', 'Of', 'A', 'An', 'The'];
+        if (words.some(word => navigationWords.includes(word))) {
             return false;
         }
         
@@ -232,18 +244,201 @@ class EmailScraper {
         return emailRegex.test(cleaned) ? cleaned : null;
     }
 
-    // Clean phone number
-    cleanPhone(phone) {
-        let cleaned = phone.replace(/[^\d+()-]/g, '').trim();
+    // Extract candidate keywords from the page
+    extractKeywordsFromPage($, pageText) {
+        const keywords = new Set();
+        // 1. Headings
+        $('h1, h2, h3, h4, h5, h6').each((i, el) => {
+            $(el).text().split(/\s+/).forEach(word => {
+                if (word.length > 2) keywords.add(word.trim());
+            });
+        });
+        // 2. Bold/strong text
+        $('b, strong').each((i, el) => {
+            $(el).text().split(/\s+/).forEach(word => {
+                if (word.length > 2) keywords.add(word.trim());
+            });
+        });
+        // 3. Existing name extraction
+        this.extractNamesWithContext(pageText).forEach(name => keywords.add(name));
+        // 4. Company/job titles
+        this.extractPersonalDataFromHTML($).companies.forEach(company => keywords.add(company));
+        this.extractPersonalDataFromHTML($).jobTitles.forEach(title => keywords.add(title));
+        // 5. Remove duplicates, lowercase, and filter out common stopwords
+        const stopwords = [
+            'About', 'Contact', 'Home', 'Menu', 'Navigation', 'Services', 'Products', 'Company', 'Team', 'Our', 'The', 'And', 'Or', 'But', 'For', 'With', 'From', 'To', 'In', 'On', 'At', 'By', 'Of', 'A', 'An', 'Page', 'More', 'Click', 'Here', 'Read', 'Learn', 'Get', 'Started', 'Sign', 'Up', 'Log', 'Subscribe', 'Newsletter', 'Blog', 'Post', 'Name', 'Brand', 'Service', 'Main', 'Footer', 'Header', 'Results', 'Title', 'Description', 'Alt', 'Text', 'Privacy', 'Policy', 'Terms'
+        ];
+        return Array.from(keywords)
+            .map(k => k.trim())
+            .filter(k => k.length > 2 && !stopwords.includes(k))
+            .slice(0, 100);
+    }
+
+    // Extract names from email addresses
+    extractNamesFromEmail(email) {
+        const localPart = email.split('@')[0];
+        if (!localPart) return null;
         
-        // Remove extra parentheses and dashes
-        cleaned = cleaned.replace(/\(\)/g, '');
-        cleaned = cleaned.replace(/--/g, '-');
-        cleaned = cleaned.replace(/^-|-$/g, '');
+        // Skip generic email addresses
+        const genericEmails = ['admin', 'info', 'contact', 'sales', 'support', 'help', 'noreply', 'no-reply', 'webmaster', 'postmaster', 'root', 'test', 'demo', 'example'];
+        if (genericEmails.includes(localPart.toLowerCase())) {
+            return null;
+        }
         
-        // Basic validation - should have at least 10 digits
-        const digits = cleaned.replace(/\D/g, '');
-        return digits.length >= 10 ? cleaned : null;
+        // Common patterns for email to name conversion
+        const patterns = [
+            // john.doe@company.com -> John Doe
+            /^([a-z]+)\.([a-z]+)$/i,
+            // john_doe@company.com -> John Doe
+            /^([a-z]+)_([a-z]+)$/i,
+            // j.doe@company.com -> J Doe
+            /^([a-z])\.([a-z]+)$/i,
+            // john@company.com -> John (only if it's a reasonable name)
+            /^([a-z]{2,10})$/i
+        ];
+        
+        for (const pattern of patterns) {
+            const match = localPart.match(pattern);
+            if (match) {
+                if (match.length === 3) {
+                    // Two parts: firstname.lastname or firstname_lastname
+                    const firstName = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+                    const lastName = match[2].charAt(0).toUpperCase() + match[2].slice(1).toLowerCase();
+                    
+                    // Validate that these look like real names
+                    if (firstName.length >= 2 && lastName.length >= 2) {
+                        return `${firstName} ${lastName}`;
+                    }
+                } else if (match.length === 2) {
+                    // Single part: just firstname (only for reasonable lengths)
+                    const firstName = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+                    if (firstName.length >= 2 && firstName.length <= 10) {
+                        return firstName;
+                    }
+                }
+            }
+        }
+        
+        // Try camelCase pattern: johnDoe@company.com -> John Doe
+        const camelCaseMatch = localPart.match(/^([a-z]+)([A-Z][a-z]+)$/);
+        if (camelCaseMatch) {
+            const firstName = camelCaseMatch[1].charAt(0).toUpperCase() + camelCaseMatch[1].slice(1).toLowerCase();
+            const lastName = camelCaseMatch[2];
+            if (firstName.length >= 2 && lastName.length >= 2) {
+                return `${firstName} ${lastName}`;
+            }
+        }
+        
+        // Try to split long strings that might be concatenated names
+        if (localPart.length >= 6 && localPart.length <= 15) {
+            // Look for patterns like "johndoe" -> "John Doe"
+            const splitMatch = localPart.match(/^([a-z]{3,8})([a-z]{3,8})$/i);
+            if (splitMatch) {
+                const firstName = splitMatch[1].charAt(0).toUpperCase() + splitMatch[1].slice(1).toLowerCase();
+                const lastName = splitMatch[2].charAt(0).toUpperCase() + splitMatch[2].slice(1).toLowerCase();
+                return `${firstName} ${lastName}`;
+            }
+        }
+        
+        return null;
+    }
+    
+    // Enhanced AI categorization that also generates names
+    async categorizeDataWithAI(data) {
+        if (!this.options.useAICategorization) {
+            return data;
+        }
+
+        try {
+            const openRouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.options.openRouterApiKey}`,
+                    'Content-Type': 'application/json',
+                    'HTTP-Referer': 'https://email-scraper-dashboard.com',
+                    'X-Title': 'Email Scraper AI Categorization'
+                },
+                body: JSON.stringify({
+                    model: 'google/gemini-flash-1.5',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: `You are an AI assistant that processes contact and business data. 
+                            Given the provided data, return a JSON object with these fields:
+                            {
+                                "names": ["extracted or inferred person names"],
+                                "keywords": ["20-30 most relevant keywords"],
+                                "industries": ["inferred industries"],
+                                "seniority": ["junior", "mid", "senior", "executive"],
+                                "departments": ["inferred departments"],
+                                "confidence": 0.95
+                            }
+                            
+                            Rules:
+                            - Extract names from email addresses, job titles, or other context
+                            - Filter keywords to remove generic/navigation words
+                            - Infer industries from job titles and company names
+                            - Assign seniority levels based on job titles
+                            - Return only valid JSON, no markdown`
+                        },
+                        {
+                            role: 'user',
+                            content: `Process this contact data: ${JSON.stringify(data)}`
+                        }
+                    ],
+                    max_tokens: 300,
+                    temperature: 0.1
+                })
+            });
+
+            if (!openRouterResponse.ok) {
+                console.warn('AI categorization failed, using original data');
+                return data;
+            }
+
+            const aiResult = await openRouterResponse.json();
+            const aiContent = aiResult.choices?.[0]?.message?.content;
+            if (!aiContent) {
+                return data;
+            }
+            
+            try {
+                let cleanContent = aiContent.trim();
+                if (cleanContent.startsWith('```json')) {
+                    cleanContent = cleanContent.replace(/^```json\n/, '').replace(/\n```$/, '');
+                } else if (cleanContent.startsWith('```')) {
+                    cleanContent = cleanContent.replace(/^```\n/, '').replace(/\n```$/, '');
+                }
+                
+                const aiData = JSON.parse(cleanContent);
+                const enhancedData = { ...data };
+                
+                // Merge AI-generated names
+                if (aiData.names && Array.isArray(aiData.names)) {
+                    enhancedData.names = [...new Set([...(data.names || []), ...aiData.names])];
+                }
+                
+                // Merge AI-filtered keywords
+                if (aiData.keywords && Array.isArray(aiData.keywords)) {
+                    enhancedData.keywords = aiData.keywords.slice(0, 30);
+                }
+                
+                // Merge other AI data
+                if (aiData.industries) enhancedData.industries = aiData.industries;
+                if (aiData.seniority) enhancedData.seniority = aiData.seniority;
+                if (aiData.departments) enhancedData.departments = aiData.departments;
+                if (aiData.confidence) enhancedData.confidence = aiData.confidence;
+                
+                return enhancedData;
+            } catch (parseError) {
+                console.warn('Failed to parse AI response, using original data');
+                console.warn('AI Response was:', aiContent);
+                return data;
+            }
+        } catch (error) {
+            console.warn('AI categorization error:', error.message);
+            return data;
+        }
     }
 
     // Clean name
@@ -271,44 +466,9 @@ class EmailScraper {
         return Array.from(emails);
     }
 
-    // Extract phone numbers from text content
-    extractPhonesFromText(text) {
-        const phones = new Set();
-        const patterns = this.getPhonePatterns();
-
-        patterns.forEach(pattern => {
-            const matches = text.match(pattern);
-            if (matches) {
-                matches.forEach(match => {
-                    const cleaned = this.cleanPhone(match);
-                    if (cleaned) {
-                        phones.add(cleaned);
-                    }
-                });
-            }
-        });
-
-        return Array.from(phones);
-    }
-
-    // Extract names from text content
+    // Extract names from text content using smart context analysis
     extractNamesFromText(text) {
-        const names = new Set();
-        const patterns = this.getNamePatterns();
-
-        patterns.forEach(pattern => {
-            const matches = text.match(pattern);
-            if (matches) {
-                matches.forEach(match => {
-                    const cleaned = this.cleanName(match);
-                    if (cleaned && cleaned.length > 3) {
-                        names.add(cleaned);
-                    }
-                });
-            }
-        });
-
-        return Array.from(names);
+        return this.extractNamesWithContext(text);
     }
 
     // Extract social media profiles from text content
@@ -346,26 +506,18 @@ class EmailScraper {
     // Extract personal data from HTML elements
     extractPersonalDataFromHTML($) {
         const personalData = {
-            phones: new Set(),
-            names: new Set(),
+            keywords: new Set(),
             addresses: new Set(),
             socialMedia: {},
             jobTitles: new Set(),
             companies: new Set()
         };
 
-        // Extract from contact information elements
-        $('[class*="contact"], [class*="phone"], [class*="tel"], [id*="contact"], [id*="phone"], [id*="tel"]').each((i, el) => {
+        // Extract from name elements with enhanced context
+        $('[class*="name"], [class*="author"], [class*="person"], [id*="name"], [id*="author"], [id*="person"], [class*="contact"], [class*="team"], [class*="staff"]').each((i, el) => {
             const text = $(el).text();
-            const phones = this.extractPhonesFromText(text);
-            phones.forEach(phone => personalData.phones.add(phone));
-        });
-
-        // Extract from name elements
-        $('[class*="name"], [class*="author"], [class*="person"], [id*="name"], [id*="author"], [id*="person"]').each((i, el) => {
-            const text = $(el).text();
-            const names = this.extractNamesFromText(text);
-            names.forEach(name => personalData.names.add(name));
+            const names = this.extractNamesWithContext(text);
+            names.forEach(name => personalData.keywords.add(name));
         });
 
         // Extract from address elements
@@ -387,11 +539,11 @@ class EmailScraper {
             });
         });
 
-        // Extract job titles and companies
-        $('[class*="title"], [class*="position"], [class*="job"], [class*="company"], [class*="organization"]').each((i, el) => {
+        // Extract job titles and companies with enhanced patterns
+        $('[class*="title"], [class*="position"], [class*="job"], [class*="company"], [class*="organization"], [class*="role"]').each((i, el) => {
             const text = $(el).text();
-            // Simple patterns for job titles and companies
-            const titleMatch = text.match(/\b(CEO|CTO|CFO|COO|VP|Director|Manager|Lead|Senior|Junior|Developer|Engineer|Designer|Analyst|Consultant|Specialist|Coordinator|Assistant|Intern)\b/gi);
+            // Enhanced patterns for job titles and companies
+            const titleMatch = text.match(/\b(CEO|CTO|CFO|COO|VP|Director|Manager|Lead|Senior|Junior|Developer|Engineer|Designer|Analyst|Consultant|Specialist|Coordinator|Assistant|Intern|Founder|Co-founder|President|Executive|Head|Chief|Officer|Coordinator|Supervisor|Team Lead|Project Manager|Product Manager|Marketing Manager|Sales Manager|HR Manager|Operations Manager|Business Analyst|Data Analyst|UX Designer|UI Designer|Frontend|Backend|Full Stack|DevOps|QA|Tester|Architect|Consultant|Advisor|Mentor|Coach|Trainer|Instructor|Professor|Teacher|Lecturer|Researcher|Scientist|Doctor|Physician|Nurse|Therapist|Counselor|Lawyer|Attorney|Accountant|Bookkeeper|Receptionist|Administrator|Secretary|Assistant|Intern|Volunteer|Freelancer|Contractor|Consultant)\b/gi);
             if (titleMatch) {
                 titleMatch.forEach(title => personalData.jobTitles.add(title.trim()));
             }
@@ -399,8 +551,7 @@ class EmailScraper {
 
         // Convert Sets to Arrays
         return {
-            phones: Array.from(personalData.phones),
-            names: Array.from(personalData.names),
+            keywords: Array.from(personalData.keywords),
             addresses: Array.from(personalData.addresses),
             socialMedia: Object.keys(personalData.socialMedia).reduce((acc, platform) => {
                 acc[platform] = Array.from(personalData.socialMedia[platform]);
@@ -487,8 +638,38 @@ class EmailScraper {
         });
     }
 
+    // Add this helper method
+    shouldVisitUrl(url) {
+        if (this.options.restrictToPath && this.options.restrictToPath.length > 0) {
+            // More precise matching: URL should start with the restricted path
+            // and either be exactly the same or have a '/' after the restricted path
+            const restrictedPath = this.options.restrictToPath;
+            const shouldVisit = url === restrictedPath || 
+                               url.startsWith(restrictedPath + '/') ||
+                               url.startsWith(restrictedPath + '?') ||
+                               url.startsWith(restrictedPath + '#');
+            
+            if (!shouldVisit && this.options.onProgress) {
+                this.options.onProgress({
+                    type: 'url_filtered',
+                    url: url,
+                    reason: `Does not match restricted path: ${this.options.restrictToPath}`
+                });
+            }
+            return shouldVisit;
+        }
+        return true;
+    }
+
     // Scrape a single page
     async scrapePage(url, depth = 0) {
+        if (!this.shouldVisitUrl(url)) {
+            if (this.options.onProgress) {
+                this.options.onProgress({ type: 'skipped', url, reason: 'Does not match restrictToPath' });
+            }
+            return { emails: [], personalData: {} };
+        }
+
         if (depth > this.options.maxDepth || this.visitedUrls.size >= this.options.maxPages) {
             return { emails: [], links: [], personalData: {} };
         }
@@ -571,14 +752,22 @@ class EmailScraper {
                 personalData = this.extractPersonalDataFromHTML($);
                 
                 // Also extract from page text
-                const textPhones = this.extractPhonesFromText(pageText);
-                const textNames = this.extractNamesFromText(pageText);
+                const textNames = this.extractNamesWithContext(pageText);
                 const textSocialMedia = this.extractSocialMediaFromText(pageText);
                 const textAddresses = this.extractAddressesFromText(pageText);
 
+                // Extract names from email addresses
+                const emailNames = [];
+                allEmails.forEach(email => {
+                    const extractedName = this.extractNamesFromEmail(email);
+                    if (extractedName) {
+                        emailNames.push(extractedName);
+                    }
+                });
+
                 // Merge with HTML data
-                personalData.phones = [...new Set([...personalData.phones, ...textPhones])];
-                personalData.names = [...new Set([...personalData.names, ...textNames])];
+                personalData.keywords = [...new Set([...personalData.keywords, ...textNames])];
+                personalData.names = [...new Set([...emailNames, ...textNames])]; // Combine email names and extracted names
                 personalData.addresses = [...new Set([...personalData.addresses, ...textAddresses])];
 
                 // Merge social media
@@ -588,6 +777,15 @@ class EmailScraper {
                     }
                     personalData.socialMedia[platform] = [...new Set([...personalData.socialMedia[platform], ...textSocialMedia[platform]])];
                 });
+
+                // Apply AI categorization if enabled
+                if (this.options.useAICategorization && Object.keys(personalData).length > 0) {
+                    try {
+                        personalData = await this.categorizeDataWithAI(personalData);
+                    } catch (error) {
+                        console.warn('AI categorization failed:', error.message);
+                    }
+                }
             }
 
             // Extract links for further crawling
@@ -602,7 +800,10 @@ class EmailScraper {
                         // Only follow links from the same domain
                         const originalParsed = new URLParse(url);
                         if (parsedUrl.host === originalParsed.host) {
-                            links.push(absoluteUrl);
+                            // Only add links that match the restricted path (if specified)
+                            if (this.shouldVisitUrl(absoluteUrl)) {
+                                links.push(absoluteUrl);
+                            }
                         }
                     } catch (error) {
                         // Skip invalid URLs
@@ -618,23 +819,41 @@ class EmailScraper {
                 allEmails.forEach(email => {
                     if (!this.personalData.has(email)) {
                         this.personalData.set(email, {
-                            phones: [],
                             names: [],
+                            keywords: [],
                             addresses: [],
                             socialMedia: {},
                             jobTitles: [],
                             companies: [],
+                            industries: [],
+                            seniority: [],
+                            departments: [],
+                            confidence: 0,
                             sourceUrl: url
                         });
                     }
                     
                     const existingData = this.personalData.get(email);
                     // Merge new data with existing data
-                    existingData.phones = [...new Set([...existingData.phones, ...personalData.phones])];
-                    existingData.names = [...new Set([...existingData.names, ...personalData.names])];
+                    existingData.names = [...new Set([...existingData.names, ...(personalData.names || [])])];
+                    existingData.keywords = [...new Set([...existingData.keywords, ...personalData.keywords])];
                     existingData.addresses = [...new Set([...existingData.addresses, ...personalData.addresses])];
                     existingData.jobTitles = [...new Set([...existingData.jobTitles, ...personalData.jobTitles])];
                     existingData.companies = [...new Set([...existingData.companies, ...personalData.companies])];
+                    
+                    // Merge AI-categorized data if available
+                    if (personalData.industries) {
+                        existingData.industries = [...new Set([...existingData.industries, ...personalData.industries])];
+                    }
+                    if (personalData.seniority) {
+                        existingData.seniority = [...new Set([...existingData.seniority, ...personalData.seniority])];
+                    }
+                    if (personalData.departments) {
+                        existingData.departments = [...new Set([...existingData.departments, ...personalData.departments])];
+                    }
+                    if (personalData.confidence) {
+                        existingData.confidence = Math.max(existingData.confidence, personalData.confidence);
+                    }
                     
                     // Merge social media
                     Object.keys(personalData.socialMedia).forEach(platform => {
@@ -671,7 +890,10 @@ class EmailScraper {
 
             console.log(`Found ${allEmails.length} emails on ${url}`);
             if (this.options.collectPersonalData) {
-                console.log(`Found personal data: ${personalData.phones.length} phones, ${personalData.names.length} names, ${personalData.addresses.length} addresses`);
+                console.log(`Found personal data: ${personalData.keywords.length} keywords, ${personalData.addresses.length} addresses, ${Object.keys(personalData.socialMedia).length} social platforms`);
+                if (this.options.useAICategorization) {
+                    console.log(`AI categorization: ${personalData.industries?.length || 0} industries, ${personalData.seniority?.length || 0} seniority levels, ${personalData.departments?.length || 0} departments`);
+                }
             }
             
             return { emails: allEmails, links: [...new Set(links)], personalData };
@@ -703,6 +925,13 @@ class EmailScraper {
         for (const url of urls) {
             if (this.visitedUrls.size >= this.options.maxPages) break;
             
+            if (!this.shouldVisitUrl(url)) {
+                if (this.options.onProgress) {
+                    this.options.onProgress({ type: 'skipped', url, reason: 'Does not match restrictToPath' });
+                }
+                continue;
+            }
+            
             const result = await this.scrapePage(url, depth);
             newUrls.push(...result.links);
             
@@ -728,6 +957,9 @@ class EmailScraper {
         console.log(`Max depth: ${this.options.maxDepth}, Max pages: ${this.options.maxPages}`);
         if (this.options.collectPersonalData) {
             console.log(`Personal data collection: ENABLED`);
+            if (this.options.useAICategorization) {
+                console.log(`AI categorization: ENABLED (using Google Gemini Flash via OpenRouter)`);
+            }
         }
 
         try {

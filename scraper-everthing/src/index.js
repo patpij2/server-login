@@ -58,7 +58,10 @@ app.post('/api/scrape', async (req, res) => {
             skipFonts: options.skipFonts !== false,
             skipMedia: options.skipMedia !== false,
             timeout: options.timeout || 30000,
-            collectPersonalData: options.collectPersonalData !== false
+            collectPersonalData: options.collectPersonalData !== false,
+            useAICategorization: options.useAICategorization !== false,
+            openRouterApiKey: options.openRouterApiKey || process.env.OPENROUTER_API_KEY,
+            restrictToPath: options.restrictToPath || ''
         };
 
         logger.info(`Starting scraping for URL: ${url}`, { options: scrapingOptions });
@@ -136,6 +139,9 @@ app.post('/api/scrape/fast/progress', async (req, res) => {
             skipMedia: true,
             timeout: 15000,
             collectPersonalData: req.body.options?.collectPersonalData !== false, // Default to true unless explicitly disabled
+            useAICategorization: req.body.options?.useAICategorization !== false, // Default to true unless explicitly disabled
+            openRouterApiKey: req.body.options?.openRouterApiKey || process.env.OPENROUTER_API_KEY,
+            restrictToPath: req.body.options?.restrictToPath || '',
             onProgress: (progress) => {
                 // Send progress update to client
                 res.write(`data: ${JSON.stringify(progress)}\n\n`);
