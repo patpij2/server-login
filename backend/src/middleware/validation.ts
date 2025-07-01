@@ -139,4 +139,23 @@ export class ValidationMiddleware {
 
     next();
   }
+
+  /**
+   * Validate email schema prompt
+   */
+  static validateEmailSchemaPrompt(req: Request, res: Response, next: NextFunction): void {
+    const { prompt } = req.body;
+
+    // Check required fields
+    if (!prompt || prompt.trim() === '') {
+      return ResponseHelper.validationError(res, ['Email generation prompt cannot be empty']);
+    }
+
+    // Validate prompt length
+    if (prompt.length > VALIDATION_CONFIG.QUERY_MAX_LENGTH) {
+      return ResponseHelper.validationError(res, [`Email generation prompt must be less than ${VALIDATION_CONFIG.QUERY_MAX_LENGTH} characters`]);
+    }
+
+    next();
+  }
 } 

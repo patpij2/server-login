@@ -11,6 +11,9 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
+        textarea {
+            font-family: Arial, sans-serif;
+        }
         .dashboard-container {
             max-width: 800px;
             margin: 0 auto;
@@ -161,6 +164,125 @@
             text-align: center;
             color: #6c757d;
             font-style: italic;
+        }
+        
+        /* Email Schema Section Styles */
+        .email-schema-section { 
+            margin-top: 40px; 
+            text-align: left; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 30px; 
+        }
+        .email-schema-section h2 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+        .email-schema-section h2::before {
+            content: "🎯 ";
+        }
+        .section-description {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        #emailSchemaForm textarea { 
+            width: 100%; 
+            padding: 10px; 
+            border: 1px solid #ddd; 
+            border-radius: 5px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            margin-bottom: 10px; 
+            min-height: 80px;
+            resize: vertical;
+        }
+        #emailSchemaForm button { 
+            width: 100%; 
+            background-color: #28a745; 
+            color: white; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+        }
+        #emailSchemaForm button:hover { 
+            background-color: #218838; 
+        }
+        #emailSchemaForm button:disabled { 
+            background-color: #6c757d; 
+            cursor: not-allowed; 
+        }
+        #emailSchemaResults { 
+            margin-top: 20px; 
+        }
+        .schema-item { 
+            background-color: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 8px; 
+            padding: 20px; 
+            margin-bottom: 15px; 
+        }
+        .schema-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .schema-subject {
+            font-weight: bold;
+            color: #28a745;
+            font-size: 1.1em;
+        }
+        .schema-tone {
+            background-color: #e8f5e8;
+            color: #155724;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .schema-body {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .schema-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .schema-key-points {
+            background-color: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #ffc107;
+        }
+        .schema-key-points h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .schema-key-points ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .schema-style-notes {
+            background-color: #d1ecf1;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #17a2b8;
+        }
+        .schema-style-notes h4 {
+            margin-top: 0;
+            color: #0c5460;
         }
         
         /* Email Scraping Section Styles */
@@ -492,6 +614,18 @@
                 </div>
             </div>
 
+            <div class="email-schema-section">
+                <h2>Generate Email Schema from Memory</h2>
+                <p class="section-description">AI analyzes your email writing style from memories and generates email schemas that match your tone and structure.</p>
+                <form id="emailSchemaForm">
+                    <textarea id="emailSchemaPrompt" placeholder="Describe the email you want to generate (e.g., 'Follow-up email to client about project status', 'Thank you email to team after successful launch', 'Meeting invitation to stakeholders')" required></textarea>
+                    <button type="submit" id="generateSchemaBtn">🎯 Generate Email Schema</button>
+                </form>
+                <div id="emailSchemaResults">
+                    <!-- Email schema results will be displayed here -->
+                </div>
+            </div>
+
             <div class="email-scraping-section">
                 <h2>Email Scraper</h2>
                 <form id="emailScrapingForm">
@@ -534,7 +668,20 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:8000/api'; 
+        // Auto-detect backend URL based on current location
+        function getBackendURL() {
+            const currentHost = window.location.hostname;
+            
+            // If accessing from localhost, use localhost for backend
+            if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+                return 'http://localhost:8000/api';
+            }
+            
+            // If accessing from network IP, use the same IP for backend
+            return `http://${currentHost}:8000/api`;
+        }
+        
+        const API_URL = getBackendURL(); 
 
         // Check if user is logged in when page loads
         window.onload = function() {
@@ -782,6 +929,88 @@
             }
         });
 
+        // Email Schema Form Handler
+        document.getElementById('emailSchemaForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const promptInput = document.getElementById('emailSchemaPrompt');
+            const prompt = promptInput.value.trim();
+            const token = localStorage.getItem('authToken');
+            const resultsDiv = document.getElementById('emailSchemaResults');
+            const generateBtn = document.getElementById('generateSchemaBtn');
+
+            if (!prompt) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter a description of the email you want to generate.</p>';
+                return;
+            }
+
+            if (!token) {
+                alert('Your session has expired. Please log in again.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.textContent = '🎯 Analyzing your style...';
+            resultsDiv.innerHTML = '<p class="loading">🤖 AI is analyzing your email writing style from memories...</p>';
+
+            try {
+                const response = await fetch(`${API_URL}/memories/generate-email-schema`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: prompt }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const schema = result.data.schema;
+                    
+                    // Display the email schema
+                    resultsDiv.innerHTML = `
+                        <div class="schema-item">
+                            <div class="schema-header">
+                                <div class="schema-subject">📧 ${schema.subject}</div>
+                                <div class="schema-tone">${schema.tone}</div>
+                            </div>
+                            <div class="schema-body">${schema.body}</div>
+                            <div class="schema-details">
+                                <div class="schema-key-points">
+                                    <h4>🎯 Key Points</h4>
+                                    <ul>
+                                        ${schema.keyPoints.map(point => `<li>${point}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                <div class="schema-style-notes">
+                                    <h4>📝 Style Notes</h4>
+                                    <p>${schema.styleNotes}</p>
+                                </div>
+                            </div>
+                            <div style="margin-top: 15px; padding: 10px; background-color: #e8f5e8; border-radius: 5px; color: #155724;">
+                                <strong>Structure:</strong> ${schema.structure}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Clear the input
+                    promptInput.value = '';
+                } else {
+                    resultsDiv.innerHTML = `<p style="color: red;">Error: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error generating email schema:', error);
+                resultsDiv.innerHTML = '<p style="color: red;">An error occurred. Please try again.</p>';
+            } finally {
+                // Reset button state
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🎯 Generate Email Schema';
+            }
+        });
+
         // Email Scraping Form Handler
         document.getElementById('emailScrapingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -824,10 +1053,10 @@
 
             try {
                 // Use Server-Sent Events for real-time progress
-                const eventSource = new EventSource(`http://localhost:3001/api/scrape/fast/progress?url=${encodeURIComponent(url)}`);
+                const eventSource = new EventSource(`${SCRAPER_URL}/api/scrape/fast/progress?url=${encodeURIComponent(url)}`);
                 
                 // Send the actual request
-                const response = await fetch('http://localhost:3001/api/scrape/fast/progress', {
+                const response = await fetch(`${SCRAPER_URL}/api/scrape/fast/progress`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1316,6 +1545,16 @@
         document.addEventListener('DOMContentLoaded', function() {
             checkGmailConnection();
         });
+
+        // Add this at the top of the script section (after backend URL logic)
+        function getScraperURL() {
+            const currentHost = window.location.hostname;
+            if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+                return 'http://localhost:3001';
+            }
+            return `http://${currentHost}:3001`;
+        }
+        const SCRAPER_URL = getScraperURL();
     </script>
 </body>
 </html>

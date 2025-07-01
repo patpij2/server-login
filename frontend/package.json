@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Simple login frontend",
   "scripts": {
-    "start": "npx http-server -p 3000 -o",
-    "dev": "npx http-server -p 3000 -o -c-1"
+    "start": "npx http-server -p 3000 -a 0.0.0.0 -o",
+    "dev": "npx http-server -p 3000 -a 0.0.0.0 -o -c-1"
   },
   "devDependencies": {
     "http-server": "^14.1.1"

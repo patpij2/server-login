@@ -84,5 +84,37 @@ export class MemoryController {
           message: 'Internal server error',
         });
       }
-    }  
+    }
+
+    /**
+     * Handles email schema generation requests
+     */
+    static async generateEmailSchema(req: Request, res: Response): Promise<void> {
+      try {
+        const user = req.user!;
+        const { prompt } = req.body;
+  
+        if (!prompt || prompt.trim() === '') {
+          res.status(400).json({
+            success: false,
+            message: 'Email generation prompt is required.',
+          });
+          return;
+        }
+  
+        const result = await MemoryService.generateEmailSchema(prompt, user.id);
+  
+        if (result.success) {
+          res.status(200).json(result);
+        } else {
+          res.status(400).json(result);
+        }
+      } catch (error) {
+        console.error('Generate email schema controller error:', error);
+        res.status(500).json({
+          success: false,
+          message: 'Internal server error',
+        });
+      }
+    }
 }

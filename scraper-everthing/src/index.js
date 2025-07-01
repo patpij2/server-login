@@ -355,10 +355,10 @@ app.use('*', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-    logger.info(`Email Scraper API server running on port ${PORT}`);
-    console.log(`🚀 Email Scraper API server running on http://localhost:${PORT}`);
-    console.log(`📖 API Documentation: http://localhost:${PORT}/api/status`);
-});
+app.listen(PORT, '0.0.0.0', () => {
+    logger.info(`Scraper API server running on:`);
+    logger.info(`  Local:   http://localhost:${PORT}`);
+    logger.info(`  Network: http://192.168.1.92:${PORT}`); // use your actual IP
+  });
 
 module.exports = app; 

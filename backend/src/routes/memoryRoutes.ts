@@ -14,5 +14,6 @@ const router = Router();
 router.post('/add', authenticateToken, ValidationMiddleware.validateMemoryContent, MemoryController.addMemory);
 router.post('/search', authenticateToken, ValidationMiddleware.validateSearchQuery, MemoryController.searchMemories);
 router.post('/ask', authenticateToken, ValidationMiddleware.validateQuestion, MemoryController.askQuestion);
+router.post('/generate-email-schema', authenticateToken, ValidationMiddleware.validateEmailSchemaPrompt, MemoryController.generateEmailSchema);
 
 export default router;

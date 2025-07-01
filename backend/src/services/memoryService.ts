@@ -227,4 +227,187 @@ export class MemoryService {
     }
   }
 
+  /**
+   * Generate email schema based on user's memory analysis
+   * @param prompt - The user's prompt for email generation
+   * @param userId - The ID of the user requesting the schema
+   * @returns AI-generated email schema based on user's memories
+   */
+  static async generateEmailSchema(prompt: string, userId: string): Promise<ApiResponse<{ 
+    schema: {
+      subject: string;
+      body: string;
+      tone: string;
+      structure: string;
+      keyPoints: string[];
+      styleNotes: string;
+    };
+    prompt: string;
+  }>> {
+    if (!prompt || prompt.trim() === '') {
+      return { success: false, message: 'Email generation prompt cannot be empty.' };
+    }
+
+    try {
+      console.log(`User ${userId} requested email schema for: "${prompt}"`);
+
+      // Step 1: Search user's memories for email-related content and writing style
+      const searchResult = await this.searchMemories(prompt + ' email writing style tone', userId);
+      
+      if (!searchResult.success || !searchResult.data?.results?.length) {
+        console.log(`❌ No email-related memories found`);
+        return { 
+          success: false, 
+          message: 'No email-related memories found. Please add some email content to your memories first.' 
+        };  
+      }
+
+      // Step 2: Optimize context - take top memories related to email writing
+      const allMemories = searchResult.data.results;
+      console.log(`📚 Found ${allMemories.length} email-related memories`);
+      
+      const sortedMemories = allMemories.sort((a: any, b: any) => (b.score || 0) - (a.score || 0));
+      const topMemories = sortedMemories.slice(0, 5); // Take top 5 for better style analysis
+      
+      let context = topMemories
+        .map((memory: any) => {
+          if (memory.chunks && memory.chunks.length > 0) {
+            return memory.chunks.map((chunk: any) => chunk.content).join(' ');
+          }
+          return memory.content || '';
+        })
+        .filter(content => content.trim() !== '')
+        .join('\n\n');
+
+      // Ensure context is substantial for style analysis
+      if (context.length < 1500 && allMemories.length > 5) {
+        const additionalMemories = allMemories.slice(5);
+        for (const memory of additionalMemories) {
+          const memoryContent = memory.chunks && memory.chunks.length > 0
+            ? memory.chunks.map((chunk: any) => chunk.content).join(' ')
+            : memory.content || '';
+          
+          if (memoryContent.trim() !== '') {
+            context += '\n\n' + memoryContent;
+            if (context.length >= 1500) break;
+          }
+        }
+      }
+
+      console.log(`\n📝 Email style context (${context.length} chars):`);
+      console.log(`"${context.substring(0, 200)}..."`);
+
+      // Step 3: Call OpenRouter API for email schema generation
+      const systemPrompt = `You are an expert email writing assistant that analyzes a user's writing style from their memories and generates email schemas that match their tone, structure, and communication patterns.
+
+      USER'S EMAIL WRITING STYLE (from memories):
+      ${context}
+
+      INSTRUCTIONS:
+      - Analyze the user's writing style, tone, and email patterns from their memories
+      - Generate an email schema that mimics their style as closely as possible
+      - Consider their typical subject line patterns, greeting styles, body structure, and closing patterns
+      - Identify their preferred tone (formal, casual, professional, friendly, etc.)
+      - Note their typical email length, paragraph structure, and key phrases they use
+      - Provide specific suggestions for subject lines, body content, and structure
+      - Include style notes about their unique writing characteristics
+
+      RESPONSE FORMAT:
+      Return a JSON object with:
+      - subject: Suggested subject line in their style
+      - body: Complete email body template in their style
+      - tone: Description of their typical tone
+      - structure: Analysis of their email structure patterns
+      - keyPoints: Array of key points they typically include
+      - styleNotes: Specific notes about their writing style`;
+
+      const userPrompt = `Generate an email schema for: ${prompt}
+
+      Please analyze my writing style from the memories above and create an email schema that matches my typical communication patterns.`;
+      
+      console.log(`\n🤖 Sending email schema request to OpenRouter:`);
+      console.log(`System prompt: "${systemPrompt.substring(0, 200)}..."`);
+      console.log(`User prompt: "${userPrompt}"`);
+      
+      const openrouterResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.openrouter.apiKey}`,
+          'HTTP-Referer': 'http://localhost:3000',
+          'X-Title': 'Email Schema Generator',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-001',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user', 
+              content: userPrompt
+            }
+          ],
+          max_tokens: 1000,
+          temperature: 0.7, // Slightly more creative for style matching
+        }),
+      });
+
+      if (!openrouterResponse.ok) {
+        const errorText = await openrouterResponse.text();
+        console.error(`❌ OpenRouter API error: ${openrouterResponse.status} - ${errorText}`);
+        throw new Error(`OpenRouter API error: ${openrouterResponse.status}`);
+      }
+
+      const aiData = await openrouterResponse.json();
+      const responseText = aiData.choices?.[0]?.message?.content || 'Sorry, I could not generate an email schema.';
+
+      // Parse the JSON response
+      let schema;
+      try {
+        // Try to extract JSON from the response
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          schema = JSON.parse(jsonMatch[0]);
+        } else {
+          // Fallback: create a basic schema structure
+          schema = {
+            subject: "Generated Subject",
+            body: responseText,
+            tone: "Professional",
+            structure: "Standard",
+            keyPoints: ["Key point 1", "Key point 2"],
+            styleNotes: "Based on your writing style"
+          };
+        }
+      } catch (parseError) {
+        console.error('Error parsing AI response:', parseError);
+        schema = {
+          subject: "Generated Subject",
+          body: responseText,
+          tone: "Professional",
+          structure: "Standard",
+          keyPoints: ["Key point 1", "Key point 2"],
+          styleNotes: "Based on your writing style"
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Email schema generated successfully based on your writing style!',
+        data: {
+          schema,
+          prompt
+        }
+      };
+
+    } catch (error) {
+      console.error('Error generating email schema:', error);
+      return { 
+        success: false, 
+        message: 'Failed to generate email schema. Please try again.' 
+      };
+    }
+  }
 }

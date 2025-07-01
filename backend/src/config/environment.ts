@@ -12,7 +12,10 @@ export const config = {
   
   // 🌐 CORS SETTINGS
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'http://192.168.1.92:3000'
+    ] as string[],
     credentials: true,
   },
   
