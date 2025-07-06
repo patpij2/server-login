@@ -166,6 +166,201 @@
             font-style: italic;
         }
         
+        /* Batch scraping styles */
+        .batch-summary {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .batch-summary h3 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+        }
+        .batch-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .batch-table th,
+        .batch-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .batch-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        .success-row {
+            background-color: #f8fff9;
+        }
+        .error-row {
+            background-color: #fff8f8;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .status-badge.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-badge.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .batch-results {
+            margin-bottom: 30px;
+        }
+        .batch-results h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .combined-emails {
+            margin-bottom: 30px;
+        }
+        .combined-emails h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        /* Export section styles */
+        .export-section {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .export-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .export-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .export-btn:hover {
+            background-color: #218838;
+        }
+        .export-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .export-info {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        
+        /* CSV Files Section Styles */
+        .csv-files-section {
+            margin-top: 40px;
+            text-align: left;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 30px;
+        }
+        .csv-files-section h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .csv-files-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .refresh-btn, .cleanup-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .refresh-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .refresh-btn:hover {
+            background-color: #0056b3;
+        }
+        .cleanup-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+        .cleanup-btn:hover {
+            background-color: #545b62;
+        }
+        .csv-files-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .csv-files-table th,
+        .csv-files-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .csv-files-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            color: #495057;
+        }
+        .csv-file-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .csv-download-btn, .csv-delete-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .csv-download-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .csv-download-btn:hover {
+            background-color: #218838;
+        }
+        .csv-delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .csv-delete-btn:hover {
+            background-color: #c82333;
+        }
+        .csv-file-size {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .csv-file-date {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
         /* Email Schema Section Styles */
         .email-schema-section { 
             margin-top: 40px; 
@@ -778,10 +973,13 @@
             <div class="email-scraping-section">
                 <h2>Email & Personal Data Scraper</h2>
                 <form id="emailScrapingForm">
-                    <input type="url" id="websiteUrl" placeholder="Enter website URL to scrape for emails (e.g., https://example.com)" required>
+                    <textarea id="websiteUrls" placeholder="Enter website URLs to scrape for emails (one URL per line, e.g.:
+https://example.com
+https://example.org
+https://example.net)" required style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; resize: vertical;"></textarea>
                     <div style="margin: 15px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px; border: 1px solid #e9ecef;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="collectPersonalData" checked style="margin-right: 10px;">
+                            <input type="checkbox" id="collectPersonalData" checked style="margin-right: 10px; width: 20px; height: 20px;">
                             <span>🔍 Collect personal data (names, addresses, social media, job titles)</span>
                         </label>
                         <div style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">
@@ -790,7 +988,7 @@
                     </div>
                     <div style="margin: 15px 0; padding: 15px; background-color: #e8f5e8; border-radius: 5px; border: 1px solid #c3e6c3;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="useAICategorization" checked style="margin-right: 10px;">
+                            <input type="checkbox" id="useAICategorization" checked style="margin-right: 10px; width: 20px; height: 20px;">
                             <span>🤖 AI-powered data categorization (industries, seniority, departments)</span>
                         </label>
                         <div style="font-size: 0.9em; color: #6c757d; margin-top: 5px;">
@@ -799,15 +997,26 @@
                     </div>
                     <div style="margin: 15px 0; padding: 15px; background-color: #eaf0fa; border-radius: 5px; border: 1px solid #bcd0ee;">
                         <label style="display: flex; align-items: center; cursor: pointer;">
-                            <input type="checkbox" id="restrictToPathEnabled" style="margin-right: 10px;">
+                            <input type="checkbox" id="restrictToPathEnabled" style="margin-right: 10px; width: 20px; height: 20px;">
                             <span>Restrict scraping to URLs starting with:</span>
                         </label>
                         <input type="text" id="restrictToPath" placeholder="e.g. https://www.intero.com/roster/agents" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 0.9em; margin-top: 8px;" disabled>
                     </div>
-                    <button type="submit" id="scrapeButton">🔍 Start Scraping</button>
+                    <button type="submit" id="scrapeButton">🔍 Start Batch Scraping</button>
                 </form>
                 <div id="emailScrapingResults">
                     <!-- Email scraping results will be displayed here -->
+                </div>
+            </div>
+
+            <div class="csv-files-section">
+                <h2>📁 Saved CSV Files</h2>
+                <div class="csv-files-controls">
+                    <button type="button" id="refreshCsvFilesBtn" class="refresh-btn">🔄 Refresh List</button>
+                    <button type="button" id="cleanupOldFilesBtn" class="cleanup-btn">🧹 Clean Up Old Files</button>
+                </div>
+                <div id="csvFilesList">
+                    <div class="loading">Loading saved CSV files...</div>
                 </div>
             </div>
 
@@ -1189,38 +1398,56 @@
         document.getElementById('emailScrapingForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const urlInput = document.getElementById('websiteUrl');
-            const url = urlInput.value.trim();
+            const urlsInput = document.getElementById('websiteUrls');
+            const urlsText = urlsInput.value.trim();
             const resultsDiv = document.getElementById('emailScrapingResults');
             const scrapeButton = document.getElementById('scrapeButton');
 
-            if (!url) {
-                resultsDiv.innerHTML = '<p style="color: red;">Please enter a website URL.</p>';
+            if (!urlsText) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter at least one website URL.</p>';
+                return;
+            }
+
+            // Parse URLs from textarea (one per line)
+            const urls = urlsText.split('\n')
+                .map(url => url.trim())
+                .filter(url => url.length > 0);
+
+            if (urls.length === 0) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter at least one valid website URL.</p>';
+                return;
+            }
+
+            if (urls.length > 100) {
+                resultsDiv.innerHTML = '<p style="color: red;">Maximum 100 URLs allowed per batch. Please reduce the number of URLs.</p>';
                 return;
             }
 
             // Show loading state
             scrapeButton.disabled = true;
-            scrapeButton.textContent = '🔄 Scraping...';
+            scrapeButton.textContent = '🔄 Batch Scraping...';
             
             // Initialize progress tracking
             let progressUpdates = [];
             let currentStats = {
-                pagesVisited: 0,
+                totalUrls: urls.length,
+                completedUrls: 0,
+                successfulUrls: 0,
+                failedUrls: 0,
                 totalEmails: 0,
-                emailsFound: 0
+                totalPages: 0
             };
             
             // Show initial loading animation
             resultsDiv.innerHTML = `
                 <div class="scraping-loading">
                     <div class="spinner"></div>
-                    <div class="scraping-progress">🔍 Starting email scraping...</div>
-                    <div class="scraping-status">Connecting to ${url}</div>
+                    <div class="scraping-progress">🔍 Starting batch email scraping...</div>
+                    <div class="scraping-status">Processing ${urls.length} URLs</div>
                 </div>
                 <div class="progress-updates" id="progressUpdates">
                     <div class="progress-stats" id="progressStats">
-                        📊 Pages: 0 | 📧 Emails: 0
+                        🌐 URLs: 0/${urls.length} | 📧 Emails: 0 | 📊 Pages: 0
                     </div>
                 </div>
             `;
@@ -1234,14 +1461,14 @@
                 const restrictToPathEnabled = document.getElementById('restrictToPathEnabled').checked;
                 const restrictToPath = restrictToPathEnabled ? document.getElementById('restrictToPath').value.trim() : '';
                 
-                // Send the request with options and handle Server-Sent Events
-                const response = await fetch(`${SCRAPER_URL}/api/scrape/fast/progress`, {
+                // Send the request to batch endpoint
+                const response = await fetch(`${SCRAPER_URL}/api/scrape/batch`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ 
-                        url: url,
+                        urls: urls,
                         options: {
                             collectPersonalData: collectPersonalData,
                             useAICategorization: useAICategorization,
@@ -1254,41 +1481,26 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                // Handle Server-Sent Events from the response
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
-                        if (line.startsWith('data: ')) {
-                            try {
-                                const data = JSON.parse(line.slice(6));
-                                console.log('Progress update:', data);
-                                handleProgressUpdate(data, progressUpdates, currentStats, resultsDiv);
-                            } catch (e) {
-                                console.error('Error parsing progress data:', e);
-                            }
-                        }
-                    }
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Display batch results
+                    displayBatchResults(data.data, urls);
+                } else {
+                    throw new Error(data.error || 'Batch scraping failed');
                 }
 
             } catch (error) {
-                console.error('Error scraping emails:', error);
+                console.error('Error batch scraping emails:', error);
                 resultsDiv.innerHTML = `
                     <div class="scraping-error">
-                        ❌ Error: Could not connect to the scraper service. Make sure the scraper is running on port 3001.
+                        ❌ Error: ${error.message || 'Could not connect to the scraper service. Make sure the scraper is running on port 3001.'}
                     </div>
                 `;
             } finally {
                 // Reset button state
                 scrapeButton.disabled = false;
-                scrapeButton.textContent = '🔍 Start Scraping';
+                scrapeButton.textContent = '🔍 Start Batch Scraping';
             }
         });
 
@@ -1467,6 +1679,166 @@
                     ${personalDataSection}
                 </div>
             `;
+        }
+
+        // Function to display batch scraping results
+        function displayBatchResults(data, originalUrls) {
+            const resultsDiv = document.getElementById('emailScrapingResults');
+            
+            // Calculate summary statistics
+            const successfulResults = data.results.filter(r => r.success);
+            const failedResults = data.results.filter(r => !r.success);
+            const allEmails = [];
+            const allPersonalData = {};
+            let totalPages = 0;
+
+            // Collect all emails and personal data from successful results
+            successfulResults.forEach(result => {
+                if (result.emails) {
+                    allEmails.push(...result.emails);
+                }
+                if (result.personalData) {
+                    Object.assign(allPersonalData, result.personalData);
+                }
+                totalPages += result.pagesVisited || 0;
+            });
+
+            // Create summary section
+            const summarySection = `
+                <div class="batch-summary">
+                    <h3>📊 Batch Scraping Summary</h3>
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">${data.totalUrls}</div>
+                            <div class="stat-label">Total URLs</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${data.successfulUrls}</div>
+                            <div class="stat-label">Successful</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${data.failedUrls}</div>
+                            <div class="stat-label">Failed</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${data.totalEmails}</div>
+                            <div class="stat-label">Total Emails</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${totalPages}</div>
+                            <div class="stat-label">Total Pages</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Create results table
+            const resultsTable = `
+                <div class="batch-results">
+                    <h3>🌐 Individual URL Results</h3>
+                    <table class="batch-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>URL</th>
+                                <th>Status</th>
+                                <th>Emails Found</th>
+                                <th>Pages Visited</th>
+                                <th>Error (if any)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.results.map((result, index) => `
+                                <tr class="${result.success ? 'success-row' : 'error-row'}">
+                                    <td>${index + 1}</td>
+                                    <td>${result.url}</td>
+                                    <td>
+                                        <span class="status-badge ${result.success ? 'success' : 'error'}">
+                                            ${result.success ? '✅ Success' : '❌ Failed'}
+                                        </span>
+                                    </td>
+                                    <td>${result.success ? (result.totalEmails || 0) : '-'}</td>
+                                    <td>${result.success ? (result.pagesVisited || 0) : '-'}</td>
+                                    <td>${result.success ? '-' : result.error}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // Create combined emails table if any emails were found
+            let emailsSection = '';
+            if (allEmails.length > 0) {
+                const emailRows = allEmails.map((email, index) => {
+                    // Find which URL this email came from
+                    const sourceUrl = successfulResults.find(result => 
+                        result.emails && result.emails.includes(email)
+                    )?.url || 'Unknown';
+                    
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${email}</td>
+                            <td>${sourceUrl}</td>
+                            <td>${new Date(data.timestamp).toLocaleString()}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                emailsSection = `
+                    <div class="combined-emails">
+                        <h3>📧 All Emails Found (${allEmails.length})</h3>
+                        <table class="email-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Email Address</th>
+                                    <th>Source URL</th>
+                                    <th>Scraped At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${emailRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // Create personal data section if any personal data was found
+            let personalDataSection = '';
+            if (Object.keys(allPersonalData).length > 0) {
+                personalDataSection = generatePersonalDataSection(allPersonalData);
+            }
+
+            // Combine all sections
+            resultsDiv.innerHTML = `
+                <div class="batch-email-results">
+                    ${summarySection}
+                    ${resultsTable}
+                    ${emailsSection}
+                    ${personalDataSection}
+                    ${allEmails.length > 0 ? `
+                        <div class="export-section">
+                            <h3>💾 Export Results</h3>
+                            <button type="button" id="exportCsvBtn" class="export-btn">
+                                📄 Export to CSV
+                            </button>
+                            <div class="export-info">
+                                Export ${allEmails.length} emails with personal data to CSV file
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Add event listener for CSV export if emails were found
+            if (allEmails.length > 0) {
+                document.getElementById('exportCsvBtn').addEventListener('click', function() {
+                    exportToCSV(data, originalUrls);
+                });
+            }
         }
 
         // Function to generate personal data section
@@ -2040,6 +2412,7 @@
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             checkGmailConnection();
+            loadCSVFiles(); // Load saved CSV files
         });
 
         // Add this at the top of the script section (after backend URL logic)
@@ -2056,6 +2429,309 @@
         document.getElementById('restrictToPathEnabled').addEventListener('change', function() {
             document.getElementById('restrictToPath').disabled = !this.checked;
         });
+
+        // Add URL counter for the textarea
+        document.getElementById('websiteUrls').addEventListener('input', function() {
+            const urls = this.value.split('\n')
+                .map(url => url.trim())
+                .filter(url => url.length > 0);
+            
+            const count = urls.length;
+            const maxAllowed = 10;
+            
+            // Update placeholder or show count somewhere
+            if (count > maxAllowed) {
+                this.style.borderColor = '#dc3545';
+                this.title = `Maximum ${maxAllowed} URLs allowed. You have entered ${count}.`;
+            } else {
+                this.style.borderColor = '#ddd';
+                this.title = `${count} URL(s) entered (max: ${maxAllowed})`;
+            }
+        });
+
+        // CSV Files Management Functions
+        async function loadCSVFiles() {
+            const filesListDiv = document.getElementById('csvFilesList');
+            
+            try {
+                const response = await fetch(`${SCRAPER_URL}/api/csv-files`);
+                const data = await response.json();
+                
+                if (data.success && data.data.files.length > 0) {
+                    displayCSVFiles(data.data.files);
+                } else {
+                    filesListDiv.innerHTML = `
+                        <div class="no-files">
+                            📭 No saved CSV files found. Export some scraping results to see them here.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading CSV files:', error);
+                filesListDiv.innerHTML = `
+                    <div class="error">
+                        ❌ Error loading CSV files. Make sure the scraper service is running.
+                    </div>
+                `;
+            }
+        }
+
+        function displayCSVFiles(files) {
+            const filesListDiv = document.getElementById('csvFilesList');
+            
+            const tableRows = files.map(file => {
+                const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                const createdDate = new Date(file.created).toLocaleString();
+                const rowCount = file.metadata.rowCount || 'Unknown';
+                
+                return `
+                    <tr>
+                        <td>${file.filename}</td>
+                        <td>
+                            <span class="csv-file-size">${sizeMB} MB</span><br>
+                            <span class="csv-file-date">${rowCount} rows</span>
+                        </td>
+                        <td>
+                            <span class="csv-file-date">${createdDate}</span>
+                        </td>
+                        <td>
+                            <div class="csv-file-actions">
+                                <button class="csv-download-btn" onclick="downloadCSVFile('${file.filename}')">
+                                    📥 Download
+                                </button>
+                                <button class="csv-delete-btn" onclick="deleteCSVFile('${file.filename}')">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            filesListDiv.innerHTML = `
+                <table class="csv-files-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Size & Rows</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        async function downloadCSVFile(filename) {
+            try {
+                const response = await fetch(`${SCRAPER_URL}/api/csv-files/${filename}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Error downloading file');
+                }
+            } catch (error) {
+                console.error('Error downloading CSV file:', error);
+                alert('Error downloading file');
+            }
+        }
+
+        async function deleteCSVFile(filename) {
+            if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${SCRAPER_URL}/api/csv-files/${filename}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('File deleted successfully');
+                    loadCSVFiles(); // Refresh the list
+                } else {
+                    alert(`Error deleting file: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error deleting CSV file:', error);
+                alert('Error deleting file');
+            }
+        }
+
+        async function cleanupOldFiles() {
+            const daysOld = prompt('Delete files older than how many days? (default: 30)', '30');
+            
+            if (!daysOld || isNaN(daysOld)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${SCRAPER_URL}/api/storage/cleanup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ daysOld: parseInt(daysOld) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`Cleaned up ${data.deletedCount} old files`);
+                    loadCSVFiles(); // Refresh the list
+                } else {
+                    alert(`Error cleaning up files: ${data.error}`);
+                }
+            } catch (error) {
+                console.error('Error cleaning up old files:', error);
+                alert('Error cleaning up files');
+            }
+        }
+
+        // Add event listeners for CSV file management
+        document.getElementById('refreshCsvFilesBtn').addEventListener('click', loadCSVFiles);
+        document.getElementById('cleanupOldFilesBtn').addEventListener('click', cleanupOldFiles);
+
+        // Function to export scraping results to CSV
+        function exportToCSV(data, originalUrls) {
+            const exportBtn = document.getElementById('exportCsvBtn');
+            exportBtn.disabled = true;
+            exportBtn.textContent = '📄 Generating CSV...';
+
+            try {
+                // Prepare data for CSV
+                const csvData = prepareCSVData(data, originalUrls);
+                
+                // Create CSV content
+                const csvContent = generateCSVContent(csvData);
+                
+                // Create and download file
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                const filename = `email_scraping_results_${timestamp}.csv`;
+                
+                downloadCSV(csvContent, filename);
+                
+                // Show success message
+                const exportInfo = document.querySelector('.export-info');
+                if (exportInfo) {
+                    exportInfo.innerHTML = `
+                        <div style="color: #28a745; font-weight: bold;">
+                            ✅ CSV file downloaded successfully: ${filename}
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error exporting to CSV:', error);
+                const exportInfo = document.querySelector('.export-info');
+                if (exportInfo) {
+                    exportInfo.innerHTML = `
+                        <div style="color: #dc3545; font-weight: bold;">
+                            ❌ Error generating CSV: ${error.message}
+                        </div>
+                    `;
+                }
+            } finally {
+                exportBtn.disabled = false;
+                exportBtn.textContent = '📄 Export to CSV';
+            }
+        }
+
+        // Function to prepare data for CSV export
+        function prepareCSVData(data, originalUrls) {
+            const successfulResults = data.results.filter(r => r.success);
+            const csvRows = [];
+            
+            // Add header row
+            csvRows.push([
+                'Email',
+                'Source URL',
+                'Names',
+                'Job Titles',
+                'Companies',
+                'Keywords',
+                'Addresses',
+                'Social Media',
+                'Industries',
+                'Seniority',
+                'Departments',
+                'Scraped At'
+            ]);
+
+            // Add data rows
+            successfulResults.forEach(result => {
+                if (result.emails && result.emails.length > 0) {
+                    result.emails.forEach(email => {
+                        const personalData = result.personalData && result.personalData[email] ? result.personalData[email] : {};
+                        
+                        const row = [
+                            email,
+                            result.url,
+                            personalData.names ? personalData.names.join('; ') : '',
+                            personalData.jobTitles ? personalData.jobTitles.join('; ') : '',
+                            personalData.companies ? personalData.companies.join('; ') : '',
+                            personalData.keywords ? personalData.keywords.join('; ') : '',
+                            personalData.addresses ? personalData.addresses.join('; ') : '',
+                            personalData.socialMedia ? Object.entries(personalData.socialMedia)
+                                .map(([platform, profiles]) => `${platform}: ${profiles.join(', ')}`)
+                                .join('; ') : '',
+                            personalData.industries ? personalData.industries.join('; ') : '',
+                            personalData.seniority ? personalData.seniority.join('; ') : '',
+                            personalData.departments ? personalData.departments.join('; ') : '',
+                            new Date(data.timestamp).toLocaleString()
+                        ];
+                        
+                        csvRows.push(row);
+                    });
+                }
+            });
+
+            return csvRows;
+        }
+
+        // Function to generate CSV content
+        function generateCSVContent(csvRows) {
+            return csvRows.map(row => 
+                row.map(cell => {
+                    // Escape quotes and wrap in quotes if contains comma, quote, or newline
+                    const escaped = String(cell).replace(/"/g, '""');
+                    if (escaped.includes(',') || escaped.includes('"') || escaped.includes('\n')) {
+                        return `"${escaped}"`;
+                    }
+                    return escaped;
+                }).join(',')
+            ).join('\n');
+        }
+
+        // Function to download CSV file
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
     </script>
 </body>
 </html>
