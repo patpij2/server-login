@@ -46,6 +46,14 @@ export const config = {
     redirectUri: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/gmail-callback.html',
   },
 
+  // 📘 FACEBOOK SETTINGS
+  facebook: {
+    appId: process.env.FACEBOOK_APP_ID!,
+    appSecret: process.env.FACEBOOK_APP_SECRET!,
+    redirectUri: process.env.FACEBOOK_REDIRECT_URI || 'http://localhost:3000/facebook-callback.html',
+    apiVersion: process.env.FACEBOOK_API_VERSION || 'v18.0',
+  },
+
 } as const;
 
 
@@ -58,7 +66,9 @@ const requiredEnvVars = [
   'SUPERMEMORY_API_KEY',
   'OPENROUTER_API_KEY',
   'GOOGLE_CLIENT_ID',
-  'GOOGLE_CLIENT_SECRET'
+  'GOOGLE_CLIENT_SECRET',
+  'FACEBOOK_APP_ID',
+  'FACEBOOK_APP_SECRET'
 ];
 
 for (const envVar of requiredEnvVars) {

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Facebook Post Test</title>
+</head>
+<body>
+    <h1>Simple Facebook Post Test</h1>
+    <p>Open browser console to see logs</p>
+    
+    <button onclick="testPost()">Test Post</button>
+    
+    <div id="result"></div>
+
+    <script>
+        async function testPost() {
+            const testData = {
+                pageId: "test-page-123",
+                message: "This is a test message from simple test"
+            };
+            
+            // Log each field individually to check for any encoding issues
+            console.log('pageId:', JSON.stringify(testData.pageId));
+            console.log('message:', JSON.stringify(testData.message));
+            console.log('message length:', testData.message.length);
+            console.log('message trimmed:', JSON.stringify(testData.message.trim()));
+            console.log('message trimmed length:', testData.message.trim().length);
+            
+            console.log('Sending data:', JSON.stringify(testData, null, 2));
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/facebook/post', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer test-token',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                console.log('Response:', result);
+                document.getElementById('result').innerHTML = JSON.stringify(result, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

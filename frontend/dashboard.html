@@ -909,6 +909,420 @@
             overflow-x: auto;
             font-size: 12px;
         }
+        
+        /* Facebook Integration Styles */
+        .facebook-section { 
+            margin-top: 40px; 
+            text-align: left; 
+            border-top: 2px solid #f0f0f0; 
+            padding-top: 30px; 
+        }
+        .facebook-section h2 { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            color: #333; 
+        }
+        .facebook-section h2::before {
+            content: "📘 ";
+        }
+
+        /* Facebook Status Overview */
+        .facebook-status-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .status-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .status-info h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .status-info p {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .facebook-connection {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .facebook-connection h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        .facebook-benefits {
+            text-align: left;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .facebook-benefits li {
+            margin-bottom: 10px;
+            color: #856404;
+        }
+        .facebook-connected {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .facebook-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .connect-facebook-btn {
+            background-color: #4267b2;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .connect-facebook-btn:hover {
+            background-color: #365899;
+        }
+        .facebook-pages {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-bottom: 20px;
+        }
+        .facebook-pages h3 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .page-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-info {
+            flex: 1;
+        }
+        .page-name {
+            font-weight: bold;
+            color: #4267b2;
+            margin-bottom: 5px;
+        }
+        .page-details {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+        .page-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .disconnect-page-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .disconnect-page-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Facebook Post Form */
+        .facebook-post-form {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .char-count {
+            text-align: right;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Facebook Help */
+        .facebook-help {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .facebook-help h4 {
+            margin-top: 0;
+            color: #0056b3;
+        }
+
+        .facebook-help ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .facebook-help li {
+            margin-bottom: 8px;
+            color: #0056b3;
+        }
+        .facebook-post-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            margin-top: 20px;
+        }
+        .facebook-post-form h3 {
+            margin-top: 0;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .facebook-post-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+        .facebook-post-form button {
+            width: 100%;
+            background-color: #4267b2;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .facebook-post-form button:hover {
+            background-color: #365899;
+        }
+        .facebook-post-form button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Enhanced Facebook Styles */
+        .facebook-status-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .status-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #4267b2;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-icon {
+            font-size: 2em;
+        }
+
+        .status-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .status-info p {
+            margin: 0;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .facebook-benefits {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .facebook-benefits li {
+            padding: 8px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pages-controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .facebook-help {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            border-left: 4px solid #17a2b8;
+        }
+
+        .facebook-help h4 {
+            margin: 0 0 15px 0;
+            color: #17a2b8;
+        }
+
+        .facebook-help ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .facebook-help li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        /* Button Styles */
+        .btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background-color: #28a745;
+        }
+
+        .notification.error {
+            background-color: #dc3545;
+        }
+
+        .notification.info {
+            background-color: #17a2b8;
+        }
+
+                  .notification.warning {
+              background-color: #ffc107;
+              color: #333;
+          }
+        #postMessage {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        #postMessage.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        #postMessage.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -1041,7 +1455,88 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                     </form>
                     <div id="draftMessage"></div>
                 </div>
-            </div>            
+            </div>
+
+                    <div class="facebook-section" id="facebook-section">
+            <h2>📘 Facebook Integration</h2>
+                
+                <!-- Facebook Status Overview -->
+                <div class="facebook-status-overview" id="facebookStatusOverview">
+                    <div class="status-card">
+                        <div class="status-icon">📊</div>
+                        <div class="status-info">
+                            <h4>Connection Status</h4>
+                            <p id="connectionStatus">Checking...</p>
+                        </div>
+                    </div>
+                    <div class="status-card">
+                        <div class="status-icon">📄</div>
+                        <div class="status-info">
+                            <h4>Connected Pages</h4>
+                            <p id="pagesCount">0 pages</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Facebook Connection -->
+                <div class="facebook-connection" id="facebookConnection">
+                    <h3>Connect Your Facebook Pages</h3>
+                    <p>Connect your Facebook pages to post content directly from the dashboard. You'll be able to:</p>
+                    <ul class="facebook-benefits">
+                        <li>📱 View all your Facebook pages in one place</li>
+                        <li>✍️ Create and schedule posts</li>
+                        <li>📊 Monitor page performance</li>
+                        <li>🔗 Manage page connections</li>
+                    </ul>
+                    <a href="#" class="connect-facebook-btn" id="connectFacebookBtn">🔗 Connect Facebook</a>
+                </div>
+                
+                <!-- Facebook Pages Management -->
+                <div class="facebook-pages" id="facebookPages" style="display: none;">
+                    <h3>Connected Facebook Pages</h3>
+                    <div class="pages-controls">
+                        <button id="refreshPagesBtn" class="btn-secondary">🔄 Refresh Pages</button>
+                        <button id="addMorePagesBtn" class="btn-secondary">➕ Add More Pages</button>
+                    </div>
+                    <div id="connectedPagesList">
+                        <!-- Connected pages will be displayed here -->
+                    </div>
+                </div>
+                
+                <!-- Facebook Posting -->
+                <div class="facebook-post-form" id="facebookPostForm" style="display: none;">
+                    <h3>Create Facebook Post</h3>
+                    <form id="postToFacebookForm">
+                        <div class="form-group">
+                            <label for="pageSelect">Select Page:</label>
+                            <select id="pageSelect" required>
+                                <option value="">Select a page to post to...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="postContent">Post Content:</label>
+                            <textarea id="postContent" placeholder="What's on your mind?" required style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; resize: vertical;"></textarea>
+                            <div class="char-count">
+                                <span id="charCount">0</span> characters
+                            </div>
+                        </div>
+                        <button type="submit" id="createPostBtn">📝 Post to Facebook</button>
+                    </form>
+                    <div id="postMessage"></div>
+                </div>
+
+                <!-- Facebook Help -->
+                <div class="facebook-help">
+                    <h4>💡 Need Help?</h4>
+                    <p>If you encounter any issues with Facebook integration:</p>
+                    <ul>
+                        <li>Make sure you're logged into Facebook</li>
+                        <li>Check that popups are allowed for this site</li>
+                        <li>Ensure your Facebook app has the necessary permissions</li>
+                        <li>Try refreshing the page and reconnecting</li>
+                    </ul>
+                </div>
+            </div>
         
 
             <div class="back-to-login">
@@ -2158,7 +2653,17 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                     }
                 });
 
+                console.log('--- Frontend Facebook Auth Debug ---');
+                console.log('API URL:', API_URL);
+                console.log('Token:', token ? token.substring(0, 20) + '...' : 'null');
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const result = await response.json();
+                console.log('Response result:', result);
 
                 if (result.success) {
                     // Open Gmail OAuth in a new window
@@ -2409,10 +2914,601 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
             }
         });
 
+        // Notification System
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notification => notification.remove());
+
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        // Facebook Integration
+        let facebookConnected = false;
+
+        // Check Facebook connection status on page load
+        async function checkFacebookConnection() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/facebook/pages`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.data.pages && result.data.pages.length > 0) {
+                    facebookConnected = true;
+                    showFacebookConnected();
+                    loadConnectedPages();
+                } else {
+                    facebookConnected = false;
+                    showFacebookDisconnected();
+                }
+            } catch (error) {
+                console.error('Error checking Facebook connection:', error);
+                facebookConnected = false;
+                showFacebookDisconnected();
+                updateFacebookStatus(false, 0);
+            }
+        }
+
+
+
+        // Connect Facebook button handler
+        document.getElementById('connectFacebookBtn').addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                alert('Please login first');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const connectBtn = document.getElementById('connectFacebookBtn');
+                const originalText = connectBtn.textContent;
+                connectBtn.textContent = '🔄 Connecting...';
+                connectBtn.disabled = true;
+
+                // Get Facebook OAuth URL
+                const response = await fetch(`${API_URL}/facebook/auth/url`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                console.log('--- Frontend Facebook Auth Debug ---');
+                console.log('API URL:', API_URL);
+                console.log('Token:', token ? token.substring(0, 20) + '...' : 'null');
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const result = await response.json();
+                console.log('Response result:', result);
+
+                if (result.success) {
+                    // Open Facebook OAuth in a new window (JWT token is now encoded in state parameter)
+                    const authWindow = window.open(result.data.authUrl, 'facebook-auth', 'width=500,height=600');
+                    
+                    if (!authWindow) {
+                        throw new Error('Popup blocked! Please allow popups for this site.');
+                    }
+
+                    // Listen for the callback
+                    const messageHandler = async function(event) {
+                        if (event.origin !== window.location.origin) return;
+                        
+                        if (event.data.type === 'facebook-auth-success') {
+                            window.removeEventListener('message', messageHandler);
+                            facebookConnected = true;
+                            showFacebookConnected();
+                            loadConnectedPages();
+                            if (authWindow) authWindow.close();
+                            
+                            // Show success message
+                            showNotification('Facebook connected successfully!', 'success');
+                            
+                            // Persist user access token if provided
+                            if (event.data.access_token) {
+                                try {
+                                    localStorage.setItem('fbUserAccessToken', event.data.access_token);
+                                    const meResp = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name&access_token=${encodeURIComponent(event.data.access_token)}`);
+                                    const me = await meResp.json();
+                                    console.log('Verified Facebook /me:', me);
+                                } catch (e) {
+                                    console.warn('Failed to verify /me after connect:', e);
+                                }
+                            }
+                        } else if (event.data.type === 'facebook-auth-error') {
+                            window.removeEventListener('message', messageHandler);
+                            if (authWindow) authWindow.close();
+                            showNotification('Facebook connection failed: ' + event.data.error, 'error');
+                        }
+                    };
+
+                    window.addEventListener('message', messageHandler);
+
+                    // Check if window was closed manually
+                    const checkClosed = setInterval(() => {
+                        if (authWindow.closed) {
+                            clearInterval(checkClosed);
+                            window.removeEventListener('message', messageHandler);
+                            // Reset button state
+                            connectBtn.textContent = originalText;
+                            connectBtn.disabled = false;
+                        }
+                    }, 1000);
+
+                } else {
+                    throw new Error(result.message || 'Failed to get Facebook authorization URL');
+                }
+            } catch (error) {
+                console.error('Error connecting Facebook:', error);
+                showNotification('Failed to connect Facebook: ' + error.message, 'error');
+            } finally {
+                // Reset button state
+                const connectBtn = document.getElementById('connectFacebookBtn');
+                connectBtn.textContent = originalText;
+                connectBtn.disabled = false;
+            }
+        });
+
+        // Show Facebook connected state
+        function showFacebookConnected() {
+            const connectionDiv = document.getElementById('facebookConnection');
+            const pagesDiv = document.getElementById('facebookPages');
+            const postForm = document.getElementById('facebookPostForm');
+            
+            connectionDiv.innerHTML = `
+                <div class="facebook-connected">
+                    <h3>✅ Facebook Connected Successfully!</h3>
+                    <p>Your Facebook pages are connected and ready for posting.</p>
+                    <button type="button" id="disconnectFacebookBtn" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                        🔌 Disconnect Facebook
+                    </button>
+                </div>
+            `;
+            
+            pagesDiv.style.display = 'block';
+            postForm.style.display = 'block';
+            
+            // Add disconnect button handler
+            document.getElementById('disconnectFacebookBtn').addEventListener('click', disconnectFacebook);
+            
+            // Add event listeners for new features
+            addFacebookEventListeners();
+        }
+
+        // Show Facebook disconnected state
+        function showFacebookDisconnected() {
+            const connectionDiv = document.getElementById('facebookConnection');
+            const pagesDiv = document.getElementById('facebookPages');
+            const postForm = document.getElementById('facebookPostForm');
+            
+            connectionDiv.innerHTML = `
+                <div class="facebook-disconnected">
+                    <h3>Connect Your Facebook Pages</h3>
+                    <p>Connect your Facebook pages to post content directly from the dashboard.</p>
+                    <a href="#" class="connect-facebook-btn" id="connectFacebookBtn">🔗 Connect Facebook</a>
+                </div>
+            `;
+            
+            pagesDiv.style.display = 'none';
+            postForm.style.display = 'none';
+            
+            // Re-add connect button handler
+            document.getElementById('connectFacebookBtn').addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Please login first');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${API_URL}/facebook/auth/url`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json',
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        const authWindow = window.open(result.data.authUrl, 'facebook-auth', 'width=500,height=600');
+                        
+                        window.addEventListener('message', async function(event) {
+                            if (event.origin !== window.location.origin) return;
+                            
+                            if (event.data.type === 'facebook-auth-success') {
+                                facebookConnected = true;
+                                showFacebookConnected();
+                                loadConnectedPages();
+                                if (authWindow) authWindow.close();
+                            }
+                        });
+                    } else {
+                        alert('Failed to get Facebook authorization URL');
+                    }
+                } catch (error) {
+                    console.error('Error connecting Facebook:', error);
+                    alert('Failed to connect Facebook');
+                }
+            });
+            
+            // Add event listeners for new features
+            addFacebookEventListeners();
+        }
+
+        // Disconnect Facebook function
+        async function disconnectFacebook() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/facebook/disconnect`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    facebookConnected = false;
+                    showFacebookDisconnected();
+                    showNotification('Facebook disconnected successfully', 'success');
+                    updateFacebookStatus(false, 0);
+                } else {
+                    showNotification('Failed to disconnect Facebook', 'error');
+                }
+            } catch (error) {
+                console.error('Error disconnecting Facebook:', error);
+                showNotification('Failed to disconnect Facebook', 'error');
+            }
+        }
+
+        // Load connected Facebook pages
+        async function loadConnectedPages() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/facebook/pages`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    updateFacebookStatus(result.data.pages);
+                }
+            } catch (error) {
+                console.error('Error loading Facebook pages:', error);
+                showNotification('Failed to load Facebook pages', 'error');
+            }
+        }
+
+        // Handle Facebook OAuth callback
+        function handleFacebookCallback() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const state = urlParams.get('state');
+            const error = urlParams.get('error');
+            
+            if (error) {
+                showNotification('Facebook connection failed: ' + error, 'error');
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                return;
+            }
+            
+            if (code && state) {
+                // This is a Facebook callback - process it
+                processFacebookCallback(code, state);
+            }
+        }
+
+        // Process Facebook OAuth callback
+        async function processFacebookCallback(code, state) {
+            try {
+                showNotification('Processing Facebook connection...', 'info');
+                
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    showNotification('Please login first', 'error');
+                    return;
+                }
+
+                // Exchange code for token via backend
+                // The state parameter already contains the JWT token, so we don't need to send it separately
+                const response = await fetch(`${API_URL}/facebook/auth/callback?code=${code}&state=${state}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Facebook connected successfully!', 'success');
+                    facebookConnected = true;
+                    showFacebookConnected();
+                    loadConnectedPages();
+                    
+                    // Persist and verify Facebook user access token if returned
+                    const fbToken = result && result.data && result.data.access_token ? result.data.access_token : null;
+                    if (fbToken) {
+                        try {
+                            localStorage.setItem('fbUserAccessToken', fbToken);
+                            const meResp = await fetch(`https://graph.facebook.com/v18.0/me?fields=id,name&access_token=${encodeURIComponent(fbToken)}`);
+                            const me = await meResp.json();
+                            console.log('Verified Facebook /me (direct callback):', me);
+                        } catch (e) {
+                            console.warn('Failed to verify /me (direct callback):', e);
+                        }
+                    }
+                    
+                    // Clean up URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } else {
+                    showNotification('Facebook connection failed: ' + (result.message || 'Unknown error'), 'error');
+                }
+            } catch (error) {
+                console.error('Error processing Facebook callback:', error);
+                showNotification('Failed to process Facebook callback', 'error');
+            }
+        }
+
+        // Track which event listeners have been added to prevent duplicates
+        let facebookEventListenersAdded = false;
+        
+        // Add event listeners for new Facebook features
+        function addFacebookEventListeners() {
+            // Prevent duplicate event listeners
+            if (facebookEventListenersAdded) {
+                return;
+            }
+            facebookEventListenersAdded = true;
+            // Refresh pages button
+            const refreshBtn = document.getElementById('refreshPagesBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', async () => {
+                    refreshBtn.textContent = '🔄 Refreshing...';
+                    refreshBtn.disabled = true;
+                    try {
+                        await loadConnectedPages();
+                        showNotification('Pages refreshed successfully', 'success');
+                    } catch (error) {
+                        showNotification('Failed to refresh pages', 'error');
+                    } finally {
+                        refreshBtn.textContent = '🔄 Refresh Pages';
+                        refreshBtn.disabled = false;
+                    }
+                });
+            }
+
+            // Add more pages button
+            const addMoreBtn = document.getElementById('addMorePagesBtn');
+            if (addMoreBtn) {
+                addMoreBtn.addEventListener('click', async () => {
+                    // Trigger Facebook connection flow
+                    const connectBtn = document.getElementById('connectFacebookBtn');
+                    if (connectBtn) {
+                        connectBtn.click();
+                    }
+                });
+            }
+
+            // Character count for post content
+            const postContent = document.getElementById('postContent');
+            if (postContent) {
+                postContent.addEventListener('input', () => {
+                    const charCount = document.getElementById('charCount');
+                    if (charCount) {
+                        charCount.textContent = postContent.value.length;
+                    }
+                });
+            }
+            
+            // Facebook post form - Add it here to prevent duplicates
+            const postToFacebookForm = document.getElementById('postToFacebookForm');
+            if (postToFacebookForm) {
+                postToFacebookForm.addEventListener('submit', handleFacebookPost);
+            }
+        }
+
+        // Display connected Facebook pages
+        function displayConnectedPages(pages) {
+            const pagesListDiv = document.getElementById('connectedPagesList');
+            
+            if (pages.length === 0) {
+                pagesListDiv.innerHTML = '<p>No Facebook pages connected yet.</p>';
+                return;
+            }
+
+            const pagesHTML = pages.map(page => `
+                <div class="page-item">
+                    <div class="page-info">
+                        <div class="page-name">${page.name}</div>
+                        <div class="page-details">
+                            Category: ${page.category} | 
+                            Followers: ${page.fan_count || 'Unknown'} | 
+                            Connected: ${new Date(page.created_at).toLocaleDateString()}
+                        </div>
+                    </div>
+                    <div class="page-actions">
+                        <button class="disconnect-page-btn" onclick="disconnectPage('${page.facebook_page_id}')">
+                            🗑️ Disconnect
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            pagesListDiv.innerHTML = pagesHTML;
+        }
+
+        // Update page select dropdown for posting
+        function updatePageSelect(pages) {
+            const pageSelect = document.getElementById('pageSelect');
+            
+            // Clear existing options except the first one
+            pageSelect.innerHTML = '<option value="">Select a page to post to...</option>';
+            
+            // Add page options
+            pages.forEach(page => {
+                const option = document.createElement('option');
+                option.value = page.facebook_page_id;
+                option.textContent = page.name;
+                pageSelect.appendChild(option);
+            });
+        }
+
+        // Disconnect individual page
+        async function disconnectPage(pageId) {
+            if (!confirm('Are you sure you want to disconnect this Facebook page?')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/facebook/pages/${pageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Page disconnected successfully');
+                    loadConnectedPages(); // Refresh the list
+                } else {
+                    alert('Failed to disconnect page');
+                }
+            } catch (error) {
+                console.error('Error disconnecting page:', error);
+                alert('Failed to disconnect page');
+            }
+        }
+
+        // Facebook Post Form Handler
+        document.getElementById('postToFacebookForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            if (!facebookConnected) {
+                alert('Please connect your Facebook account first');
+                return;
+            }
+
+            const pageId = document.getElementById('pageSelect').value;
+            const content = document.getElementById('postContent').value.trim();
+            const createBtn = document.getElementById('createPostBtn');
+            const messageDiv = document.getElementById('postMessage');
+
+            if (!pageId || !content) {
+                messageDiv.innerHTML = '<p class="error">Please select a page and enter post content.</p>';
+                return;
+            }
+
+            // Show loading state
+            createBtn.disabled = true;
+            createBtn.textContent = '📝 Posting...';
+            messageDiv.innerHTML = '';
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/facebook/post`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pageId: pageId,
+                        message: content
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.innerHTML = `
+                        <p class="success">✅ Post created successfully!</p>
+                        <p>Post ID: ${result.data.postId}</p>
+                    `;
+                    
+                    // Clear form
+                    document.getElementById('postToFacebookForm').reset();
+                } else {
+                    messageDiv.innerHTML = `<p class="error">❌ Error: ${result.message}</p>`;
+                }
+            } catch (error) {
+                console.error('Error creating Facebook post:', error);
+                messageDiv.innerHTML = '<p class="error">❌ Failed to create post. Please try again.</p>';
+            } finally {
+                // Reset button state
+                createBtn.disabled = false;
+                createBtn.textContent = '📝 Post to Facebook';
+            }
+        });
+
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Check for Facebook callback first
+            handleFacebookCallback();
+            
             checkGmailConnection();
-            loadCSVFiles(); // Load saved CSV files
+            checkFacebookConnection();
+            
+            // Check if scraper service is available before loading CSV files
+            checkScraperService();
+            
+            // Initialize Facebook event listeners after a short delay to ensure DOM is ready
+            setTimeout(() => {
+                addFacebookEventListeners();
+            }, 100);
         });
 
         // Add this at the top of the script section (after backend URL logic)
@@ -2449,6 +3545,34 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
             }
         });
 
+        // Check if scraper service is available
+        async function checkScraperService() {
+            try {
+                const response = await fetch(`${SCRAPER_URL}/api/csv-files`);
+                if (response.ok) {
+                    // Scraper service is available, load CSV files
+                    loadCSVFiles();
+                } else {
+                    showScraperUnavailable();
+                }
+            } catch (error) {
+                // Scraper service is not available
+                showScraperUnavailable();
+            }
+        }
+
+        // Show scraper unavailable message
+        function showScraperUnavailable() {
+            const filesListDiv = document.getElementById('csvFilesList');
+            if (filesListDiv) {
+                filesListDiv.innerHTML = `
+                    <div class="info">
+                        ℹ️ Scraper service is not running. CSV files will be available when you start the scraper.
+                    </div>
+                `;
+            }
+        }
+
         // CSV Files Management Functions
         async function loadCSVFiles() {
             const filesListDiv = document.getElementById('csvFilesList');
@@ -2470,7 +3594,7 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                 console.error('Error loading CSV files:', error);
                 filesListDiv.innerHTML = `
                     <div class="error">
-                        ❌ Error loading CSV files. Make sure the scraper service is running.
+                        ❌ Error loading CSV files. Please try again.
                     </div>
                 `;
             }
@@ -2730,6 +3854,426 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+            }
+        }
+
+        // Facebook Integration Functions
+        async function loadFacebookPages() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/facebook/pages`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Facebook pages response:', data);
+                    
+                    // Ensure we have an array of pages
+                    const pages = data.data?.pages || [];
+                    if (Array.isArray(pages)) {
+                        updateFacebookStatus(pages);
+                    } else {
+                        console.error('Invalid pages data structure:', pages);
+                        updateFacebookStatus([]);
+                    }
+                } else {
+                    console.error('Failed to load Facebook pages:', response.status);
+                    updateFacebookStatus([]);
+                }
+            } catch (error) {
+                console.error('Error loading Facebook pages:', error);
+                updateFacebookStatus([]);
+            }
+        }
+
+        function updateFacebookStatus(pages) {
+            // Ensure pages is always an array
+            if (!Array.isArray(pages)) {
+                console.error('updateFacebookStatus called with non-array:', pages);
+                pages = [];
+            }
+            
+            const connectionStatus = document.getElementById('connectionStatus');
+            const pagesCount = document.getElementById('pagesCount');
+            const facebookConnection = document.getElementById('facebookConnection');
+            const facebookPages = document.getElementById('facebookPages');
+            const facebookPostForm = document.getElementById('facebookPostForm');
+
+            if (!connectionStatus || !pagesCount) return;
+
+            if (pages.length === 0) {
+                // No pages connected
+                connectionStatus.textContent = 'Not Connected';
+                connectionStatus.style.color = '#dc3545';
+                pagesCount.textContent = '0 pages';
+                
+                // Show connection section, hide others
+                if (facebookConnection) facebookConnection.style.display = 'block';
+                if (facebookPages) facebookPages.style.display = 'none';
+                if (facebookPostForm) facebookPostForm.style.display = 'none';
+            } else {
+                // Pages are connected
+                connectionStatus.textContent = 'Connected';
+                connectionStatus.style.color = '#28a745';
+                pagesCount.textContent = `${pages.length} page(s)`;
+                
+                // Hide connection section, show others
+                if (facebookConnection) facebookConnection.style.display = 'none';
+                if (facebookPages) facebookPages.style.display = 'block';
+                if (facebookPostForm) facebookPostForm.style.display = 'block';
+                
+                // Update connected pages list
+                updateConnectedPagesList(pages);
+                updatePageSelect(pages);
+            }
+        }
+
+        function updateConnectedPagesList(pages) {
+            const connectedPagesList = document.getElementById('connectedPagesList');
+            if (!connectedPagesList) return;
+
+            // Ensure pages is an array
+            if (!Array.isArray(pages)) {
+                console.error('updateConnectedPagesList called with non-array:', pages);
+                connectedPagesList.innerHTML = '<div class="error">Error loading pages</div>';
+                return;
+            }
+
+            connectedPagesList.innerHTML = pages.map(page => `
+                <div class="page-item">
+                    <div class="page-info">
+                        <h4>${page.name}</h4>
+                        <p>Category: ${page.category || 'N/A'}</p>
+                        <p>Followers: ${page.fan_count || 0}</p>
+                    </div>
+                    <button onclick="deletePageConnection('${page.facebook_page_id}')" class="btn-danger">🗑️ Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function updatePageSelect(pages) {
+            const pageSelect = document.getElementById('pageSelect');
+            if (!pageSelect) return;
+
+            // Ensure pages is an array
+            if (!Array.isArray(pages)) {
+                console.error('updatePageSelect called with non-array:', pages);
+                pageSelect.innerHTML = '<option value="">Error loading pages</option>';
+                return;
+            }
+
+            pageSelect.innerHTML = '<option value="">Select a page to post to...</option>' +
+                pages.map(page => `<option value="${page.facebook_page_id}">${page.name}</option>`).join('');
+        }
+
+        // Check Facebook connection status on page load
+        async function checkFacebookConnection() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    // No token means not logged in, so no Facebook connection
+                    facebookConnected = false;
+                    showFacebookDisconnected();
+                    updateFacebookStatus([]);
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/status`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.data.pages && Array.isArray(result.data.pages) && result.data.pages.length > 0) {
+                    facebookConnected = true;
+                    showFacebookConnected();
+                    updateFacebookStatus(result.data.pages);
+                } else {
+                    facebookConnected = false;
+                    showFacebookDisconnected();
+                    updateFacebookStatus([]);
+                }
+            } catch (error) {
+                console.error('Error checking Facebook connection:', error);
+                facebookConnected = false;
+                showFacebookDisconnected();
+                updateFacebookStatus([]);
+            }
+        }
+
+        // Load connected Facebook pages
+        async function loadConnectedPages() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) return;
+
+                const response = await fetch(`${API_URL}/facebook/pages`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (result.success && result.data.pages && Array.isArray(result.data.pages)) {
+                    updateFacebookStatus(result.data.pages);
+                } else {
+                    console.error('Invalid response structure:', result);
+                    updateFacebookStatus([]);
+                }
+            } catch (error) {
+                console.error('Error loading Facebook pages:', error);
+                showNotification('Failed to load Facebook pages', 'error');
+                updateFacebookStatus([]);
+            }
+        }
+
+        // Connect Facebook function
+        async function connectFacebook() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Please login first');
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/auth/url`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const authWindow = window.open(result.data.authUrl, 'facebook-auth', 'width=500,height=600');
+                    
+                    window.addEventListener('message', async function(event) {
+                        if (event.origin !== window.location.origin) return;
+                        
+                        if (event.data.type === 'facebook-auth-success') {
+                            if (authWindow) authWindow.close();
+                            loadFacebookPages(); // Reload the pages
+                            showNotification('Facebook connected successfully!', 'success');
+                        }
+                    });
+                } else {
+                    alert('Failed to get Facebook authorization URL');
+                }
+            } catch (error) {
+                console.error('Error connecting Facebook:', error);
+                alert('Failed to connect Facebook');
+            }
+        }
+
+        // Delete page connection function
+        async function deletePageConnection(pageId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Please login first');
+                    return;
+                }
+
+                if (!confirm('Are you sure you want to remove this page connection?')) {
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/pages/${pageId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    showNotification('Page connection removed successfully!', 'success');
+                    loadFacebookPages(); // Reload the pages
+                } else {
+                    const result = await response.json();
+                    showNotification(`Failed to remove page: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting page connection:', error);
+                showNotification('Failed to remove page connection', 'error');
+            }
+        }
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 5px;
+                color: white;
+                font-weight: bold;
+                z-index: 1000;
+                max-width: 300px;
+                word-wrap: break-word;
+            `;
+
+            // Set background color based on type
+            switch (type) {
+                case 'success':
+                    notification.style.backgroundColor = '#28a745';
+                    break;
+                case 'error':
+                    notification.style.backgroundColor = '#dc3545';
+                    break;
+                case 'warning':
+                    notification.style.backgroundColor = '#ffc107';
+                    notification.style.color = '#212529';
+                    break;
+                default:
+                    notification.style.backgroundColor = '#17a2b8';
+            }
+
+            // Add to page
+            document.body.appendChild(notification);
+
+            // Remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 5000);
+        }
+
+        // Refresh Facebook pages function
+        async function refreshFacebookPages() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    alert('Please login first');
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/auth/url`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const authWindow = window.open(result.data.authUrl, 'facebook-auth', 'width=500,height=600');
+                    
+                    window.addEventListener('message', async function(event) {
+                        if (event.origin !== window.location.origin) return;
+                        
+                        if (event.data.type === 'facebook-auth-success') {
+                            if (authWindow) authWindow.close();
+                            loadFacebookPages(); // Reload the pages
+                            showNotification('Facebook pages refreshed successfully!', 'success');
+                        }
+                    });
+                } else {
+                    alert('Failed to get Facebook authorization URL');
+                }
+            } catch (error) {
+                console.error('Error refreshing Facebook pages:', error);
+                alert('Failed to refresh Facebook pages');
+            }
+        }
+
+        // Load Facebook pages when dashboard loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFacebookPages();
+            
+            // Add event listeners for Facebook functionality
+            const connectFacebookBtn = document.getElementById('connectFacebookBtn');
+            if (connectFacebookBtn) {
+                connectFacebookBtn.addEventListener('click', connectFacebook);
+            }
+
+            const refreshPagesBtn = document.getElementById('refreshPagesBtn');
+            if (refreshPagesBtn) {
+                refreshPagesBtn.addEventListener('click', loadFacebookPages);
+            }
+
+            const addMorePagesBtn = document.getElementById('addMorePagesBtn');
+            if (addMorePagesBtn) {
+                addMorePagesBtn.addEventListener('click', connectFacebook);
+            }
+
+            // Facebook post form event listener is now handled in addFacebookEventListeners() to prevent duplicates
+
+            // Add character count for post content
+            const postContent = document.getElementById('postContent');
+            if (postContent) {
+                postContent.addEventListener('input', function() {
+                    const charCount = document.getElementById('charCount');
+                    if (charCount) {
+                        charCount.textContent = this.value.length;
+                    }
+                });
+            }
+        });
+
+        // Handle Facebook post submission
+        async function handleFacebookPost(event) {
+            event.preventDefault();
+            
+            const pageId = document.getElementById('pageSelect').value;
+            const content = document.getElementById('postContent').value;
+            
+            if (!pageId) {
+                showNotification('Please select a page to post to', 'error');
+                return;
+            }
+            
+            if (!content.trim()) {
+                showNotification('Please enter post content', 'error');
+                return;
+            }
+            
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await fetch(`${API_URL}/facebook/post`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pageId: pageId,
+                        message: content
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification('Post created successfully!', 'success');
+                    document.getElementById('postContent').value = '';
+                    document.getElementById('charCount').textContent = '0';
+                } else {
+                    showNotification(`Failed to create post: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error creating Facebook post:', error);
+                showNotification('Failed to create post', 'error');
             }
         }
     </script>

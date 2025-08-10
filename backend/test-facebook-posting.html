@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Posting Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .btn {
+            background-color: #1877f2;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .btn:hover {
+            background-color: #166fe5;
+        }
+        .btn-secondary {
+            background-color: #42b883;
+        }
+        .btn-secondary:hover {
+            background-color: #369870;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .example {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .tab.active {
+            border-bottom-color: #1877f2;
+            color: #1877f2;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .tag {
+            background-color: #1877f2;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            margin-left: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Facebook Posting Test Interface</h1>
+        <p>Test the enhanced Facebook posting functionality with various options.</p>
+        
+        <div class="example">
+            <strong>📝 Instructions:</strong><br>
+            1. First, make sure you're logged in and have connected your Facebook pages<br>
+            2. Select a page from the dropdown<br>
+            3. Choose your post type and fill in the content<br>
+            4. Click "Post to Facebook" to publish
+        </div>
+
+        <div class="form-group">
+            <label for="pageSelect">Select Facebook Page:</label>
+            <select id="pageSelect">
+                <option value="">Loading pages...</option>
+            </select>
+            <button class="btn btn-secondary" onclick="loadPages()">Refresh Pages</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('text')">Text Post</div>
+            <div class="tab" onclick="showTab('image')">Image Post</div>
+            <div class="tab" onclick="showTab('link')">Link Post</div>
+            <div class="tab" onclick="showTab('scheduled')">Scheduled Post</div>
+        </div>
+
+        <!-- Text Post Tab -->
+        <div id="text-tab" class="tab-content active">
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" placeholder="What's on your mind?"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="tags">Tags (optional):</label>
+                <input type="text" id="tagInput" placeholder="Type a tag and press Enter">
+                <div class="tags-input" id="tagsContainer"></div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="publishImmediately" checked>
+                <label for="publishImmediately">Publish immediately</label>
+            </div>
+        </div>
+
+        <!-- Image Post Tab -->
+        <div id="image-tab" class="tab-content">
+            <div class="form-group">
+                <label for="imageUrl">Image URL:</label>
+                <input type="url" id="imageUrl" placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <div class="form-group">
+                <label for="imageCaption">Caption:</label>
+                <textarea id="imageCaption" placeholder="Add a caption for your image..."></textarea>
+            </div>
+        </div>
+
+        <!-- Link Post Tab -->
+        <div id="link-tab" class="tab-content">
+            <div class="form-group">
+                <label for="linkUrl">Link URL:</label>
+                <input type="url" id="linkUrl" placeholder="https://example.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="linkMessage">Message:</label>
+                <textarea id="linkMessage" placeholder="Share your thoughts about this link..."></textarea>
+            </div>
+        </div>
+
+        <!-- Scheduled Post Tab -->
+        <div id="scheduled-tab" class="tab-content">
+            <div class="form-group">
+                <label for="scheduledMessage">Message:</label>
+                <textarea id="scheduledMessage" placeholder="Your scheduled post content..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="scheduledTime">Schedule for:</label>
+                <input type="datetime-local" id="scheduledTime">
+            </div>
+        </div>
+
+        <button class="btn" onclick="postToFacebook()">Post to Facebook</button>
+        <button class="btn btn-secondary" onclick="testMediaUpload()">Test Media Upload</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        let pages = [];
+        let tags = [];
+
+        // Auto-detect backend URL
+        function getBackendURL() {
+            const currentHost = window.location.hostname;
+            if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+                return 'http://localhost:8000/api';
+            }
+            return `http://${currentHost}:8000/api`;
+        }
+        
+        const API_URL = getBackendURL();
+
+        // Get JWT token from localStorage
+        function getAuthToken() {
+            return localStorage.getItem('token');
+        }
+
+        // Show/hide tabs
+        function showTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Load user's Facebook pages
+        async function loadPages() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    showResult('Please log in first', 'error');
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/pages`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+                const pageSelect = document.getElementById('pageSelect');
+
+                if (data.success && data.data.pages) {
+                    pages = data.data.pages;
+                    pageSelect.innerHTML = '<option value="">Select a page...</option>';
+                    
+                    pages.forEach(page => {
+                        const option = document.createElement('option');
+                        option.value = page.id;
+                        option.textContent = `${page.name} (${page.fan_count || 0} followers)`;
+                        pageSelect.appendChild(option);
+                    });
+                } else {
+                    pageSelect.innerHTML = '<option value="">No pages found - Connect Facebook first</option>';
+                }
+            } catch (error) {
+                console.error('Error loading pages:', error);
+                showResult('Error loading pages: ' + error.message, 'error');
+            }
+        }
+
+        // Handle tag input
+        document.addEventListener('DOMContentLoaded', function() {
+            const tagInput = document.getElementById('tagInput');
+            tagInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag(this.value.trim());
+                    this.value = '';
+                }
+            });
+
+            // Set minimum datetime for scheduling (1 hour from now)
+            const scheduledTime = document.getElementById('scheduledTime');
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            scheduledTime.min = now.toISOString().slice(0, 16);
+            
+            // Load pages on startup
+            loadPages();
+        });
+
+        function addTag(tag) {
+            if (tag && !tags.includes(tag)) {
+                tags.push(tag);
+                renderTags();
+            }
+        }
+
+        function removeTag(tag) {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+        }
+
+        function renderTags() {
+            const container = document.getElementById('tagsContainer');
+            container.innerHTML = tags.map(tag => 
+                `<div class="tag">
+                    ${tag} 
+                    <button onclick="removeTag('${tag}')">&times;</button>
+                </div>`
+            ).join('');
+        }
+
+        // Post to Facebook
+        async function postToFacebook() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    showResult('Please log in first', 'error');
+                    return;
+                }
+
+                const pageId = document.getElementById('pageSelect').value;
+                if (!pageId) {
+                    showResult('Please select a Facebook page', 'error');
+                    return;
+                }
+
+                const activeTab = document.querySelector('.tab.active').textContent.toLowerCase();
+                let postData = { pageId };
+
+                console.log('Active tab:', activeTab);
+
+                // Build post data based on active tab
+                switch (activeTab) {
+                    case 'text post':
+                        const messageVal = document.getElementById('message').value.trim();
+                        if (messageVal) postData.message = messageVal;
+                        postData.published = document.getElementById('publishImmediately').checked;
+                        if (tags.length > 0) postData.tags = tags;
+                        break;
+                    
+                    case 'image post':
+                        const imageUrlVal = document.getElementById('imageUrl').value.trim();
+                        const imageCaptionVal = document.getElementById('imageCaption').value.trim();
+                        if (imageUrlVal) postData.imageUrl = imageUrlVal;
+                        if (imageCaptionVal) postData.message = imageCaptionVal;
+                        break;
+                    
+                    case 'link post':
+                        const linkUrlVal = document.getElementById('linkUrl').value.trim();
+                        const linkMessageVal = document.getElementById('linkMessage').value.trim();
+                        if (linkUrlVal) postData.link = linkUrlVal;
+                        if (linkMessageVal) postData.message = linkMessageVal;
+                        break;
+                    
+                    case 'scheduled post':
+                        const scheduledMessageVal = document.getElementById('scheduledMessage').value.trim();
+                        const scheduledTimeVal = document.getElementById('scheduledTime').value;
+                        if (scheduledMessageVal) postData.message = scheduledMessageVal;
+                        if (scheduledTimeVal) postData.scheduledTime = scheduledTimeVal;
+                        break;
+                }
+
+                console.log('Post data being sent:', JSON.stringify(postData, null, 2));
+
+                // Validate required fields
+                if (!postData.message && !postData.link && !postData.imageUrl) {
+                    showResult('Please provide at least a message, link, or image', 'error');
+                    return;
+                }
+
+                const response = await fetch(`${API_URL}/facebook/post`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showResult(`✅ Success! Post ID: ${result.data.postId}<br>Message: ${result.data.message}`, 'success');
+                    // Clear form
+                    document.querySelectorAll('input[type="text"], textarea, input[type="url"]').forEach(el => el.value = '');
+                    tags = [];
+                    renderTags();
+                } else {
+                    showResult(`❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error posting to Facebook:', error);
+                showResult('Error posting to Facebook: ' + error.message, 'error');
+            }
+        }
+
+        // Test media upload
+        async function testMediaUpload() {
+            try {
+                const token = getAuthToken();
+                if (!token) {
+                    showResult('Please log in first', 'error');
+                    return;
+                }
+
+                const pageId = document.getElementById('pageSelect').value;
+                if (!pageId) {
+                    showResult('Please select a Facebook page', 'error');
+                    return;
+                }
+
+                const testImageUrl = 'https://picsum.photos/800/600';
+
+                const response = await fetch(`${API_URL}/facebook/upload-media`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        pageId: pageId,
+                        mediaUrl: testImageUrl,
+                        mediaType: 'image'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showResult(`✅ Media Upload Success! Media ID: ${result.data.mediaId}`, 'success');
+                } else {
+                    showResult(`❌ Media Upload Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                console.error('Error uploading media:', error);
+                showResult('Error uploading media: ' + error.message, 'error');
+            }
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = message;
+            resultDiv.className = `result ${type}`;
+            resultDiv.style.display = 'block';
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 10000);
+        }
+    </script>
+</body>
+</html>

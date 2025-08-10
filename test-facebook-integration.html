@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .info { color: #17a2b8; }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Facebook Integration Test</h1>
+        <p>This page tests the Facebook integration endpoints to help diagnose connection issues.</p>
+
+        <div class="test-section">
+            <h3>1. Backend Connection Test</h3>
+            <button onclick="testBackendConnection()">Test Backend</button>
+            <div id="backendResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. Facebook Auth URL Test</h3>
+            <button onclick="testFacebookAuthUrl()">Get Auth URL</button>
+            <div id="authUrlResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. Facebook Status Test</h3>
+            <button onclick="testFacebookStatus()">Check Status</button>
+            <div id="statusResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. Facebook Pages Test</h3>
+            <button onclick="testFacebookPages()">Get Pages</button>
+            <div id="pagesResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. Environment Check</h3>
+            <button onclick="checkEnvironment()">Check Environment</button>
+            <div id="envResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000/api';
+
+        async function testBackendConnection() {
+            const resultDiv = document.getElementById('backendResult');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/facebook/status`);
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    resultDiv.innerHTML = `<span class="success">✅ Backend is running!</span>\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.innerHTML = `<span class="info">ℹ️ Backend responded with status: ${response.status}</span>\nResponse: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Backend connection failed</span>\nError: ${error.message}`;
+            }
+        }
+
+        async function testFacebookAuthUrl() {
+            const resultDiv = document.getElementById('authUrlResult');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                // This will fail without auth token, but we can see the response
+                const response = await fetch(`${API_URL}/facebook/auth/url`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<span class="info">ℹ️ Auth URL endpoint response</span>\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Auth URL test failed</span>\nError: ${error.message}`;
+            }
+        }
+
+        async function testFacebookStatus() {
+            const resultDiv = document.getElementById('statusResult');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/facebook/status`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<span class="info">ℹ️ Status endpoint response</span>\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Status test failed</span>\nError: ${error.message}`;
+            }
+        }
+
+        async function testFacebookPages() {
+            const resultDiv = document.getElementById('pagesResult');
+            resultDiv.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch(`${API_URL}/facebook/pages`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `<span class="info">ℹ️ Pages endpoint response</span>\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Pages test failed</span>\nError: ${error.message}`;
+            }
+        }
+
+        function checkEnvironment() {
+            const resultDiv = document.getElementById('envResult');
+            
+            const envInfo = {
+                currentUrl: window.location.href,
+                backendUrl: API_URL,
+                userAgent: navigator.userAgent,
+                timestamp: new Date().toISOString()
+            };
+            
+            resultDiv.innerHTML = `<span class="info">ℹ️ Environment Information</span>\n${JSON.stringify(envInfo, null, 2)}`;
+        }
+
+        // Auto-test backend connection on page load
+        window.onload = function() {
+            testBackendConnection();
+        };
+    </script>
+</body>
+</html> 

@@ -12,4 +12,7 @@ export * from './userTypes';
 export * from './memoryTypes';
 
 // Re-export all common types
-export * from './commonTypes'; 
+export * from './commonTypes';
+
+// Re-export all Facebook-related types
+export * from './facebookTypes'; 
