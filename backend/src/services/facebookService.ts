@@ -1,10 +1,29 @@
 /**
  * 📘 FACEBOOK SERVICE
  * 
- * Handles all Facebook API operations including:
- * - User authentication
- * - Page management
- * - Posting content
+ * This service handles the complete Facebook integration flow:
+ * 
+ * 🔐 AUTHENTICATION FLOW:
+ * 1. Generate OAuth URL → User clicks → Facebook login page
+ * 2. User logs in → Facebook redirects with code
+ * 3. Exchange code for access token → Get user's Facebook token
+ * 4. Use token to fetch user's pages → Store page info + page tokens
+ * 
+ * 📱 FACEBOOK API INTEGRATION:
+ * - Uses Facebook Graph API v18.0
+ * - Handles both user tokens (for auth) and page tokens (for posting)
+ * - Stores page access tokens in database for persistent access
+ * - Supports text posts, link sharing, image posts, and scheduling
+ * 
+ * 🔑 TOKEN TYPES:
+ * - User Access Token: Short-lived, used to get pages
+ * - Page Access Token: Long-lived, stored in DB, used for posting
+ * 
+ * 🎯 MAIN OPERATIONS:
+ * - Authentication & authorization
+ * - Page management & storage
+ * - Content posting to pages
+ * - Media upload handling
  */
 
 import { config } from '../config/environment';
@@ -13,33 +32,51 @@ import { supabase } from '../config/database';
 import { Logger } from '../utils/logger';
 
 export class FacebookService {
-  private appId: string;
-  private appSecret: string;
-  private redirectUri: string;
-  private apiVersion: string;
+  private appId: string;        // Facebook App ID (from Meta Developer Console)
+  private appSecret: string;    // Facebook App Secret (from Meta Developer Console)  
+  private redirectUri: string;  // Where Facebook redirects after user login
+  private apiVersion: string;   // Facebook Graph API version (e.g., "v18.0")
 
   constructor() {
+    // Load Facebook app credentials from environment config
+    // These are set up in your Meta Developer Console at developers.facebook.com
     this.appId = config.facebook.appId; 
     this.appSecret = config.facebook.appSecret;
-    this.redirectUri = config.facebook.redirectUri;
-    this.apiVersion = config.facebook.apiVersion;
+    this.redirectUri = config.facebook.redirectUri;  // Must match Meta Console settings
+    this.apiVersion = config.facebook.apiVersion;    // Determines API features available
   }
 
   /**
-   * Get Facebook OAuth URL for user authentication
-   * Note: Facebook has strict permission requirements.
-   * We need these three permissions to properly access and manage pages:
-   * - pages_show_list: List user's pages
-   * - pages_read_engagement: Read page engagement data and get page access tokens
-   * - pages_manage_posts: Manage page posts (for future posting functionality)
+   * 🚀 STEP 1: Generate Facebook OAuth URL for user authentication
+   * 
+   * This creates the URL that users click to start the Facebook login process.
+   * 
+   * 🔐 OAUTH FLOW EXPLANATION:
+   * 1. User clicks this URL → Redirected to Facebook login page
+   * 2. User logs into Facebook → Facebook shows permission request
+   * 3. User grants permissions → Facebook redirects back to our app with 'code'
+   * 4. We use that 'code' to get access tokens (see exchangeCodeForToken)
+   * 
+   * 🔑 REQUIRED FACEBOOK PERMISSIONS:
+   * - pages_show_list: See user's Facebook pages
+   * - pages_read_engagement: Get page access tokens (needed for posting)
+   * - pages_manage_posts: Post content to pages ⚠️ Requires Meta review for production
+   * - pages_read_user_content: Read user content on pages
+   * - business_management: Access business manager data
+   * 
+   * 📋 PARAMETERS:
+   * @param state - Optional state for CSRF protection
+   * @param jwtToken - User's JWT token (encoded in state to identify user after redirect)
+   * @returns Complete Facebook OAuth URL for user to visit
    */
   getAuthUrl(state?: string, jwtToken?: string): string {
     const baseUrl = `https://www.facebook.com/${this.apiVersion}/dialog/oauth`;
     
-    // Encode JWT token in state parameter if provided
+    // 🔐 SECURITY: Encode JWT token in state parameter 
+    // After Facebook redirects back, we'll decode this to know which user it was
     let stateParam = state || 'default';
     if (jwtToken) {
-      stateParam = `${stateParam}|${jwtToken}`;
+      stateParam = `${stateParam}|${jwtToken}`;  // Format: "state|jwt_token"
     }
     
     console.log('--- Facebook Service Debug ---');
@@ -47,19 +84,22 @@ export class FacebookService {
     console.log('JWT Token:', jwtToken ? jwtToken.substring(0, 20) + '...' : 'null');
     console.log('Final State Param:', stateParam);
     
+    // 🔧 BUILD OAUTH URL PARAMETERS
     const params = new URLSearchParams({
-      client_id: this.appId,
-      redirect_uri: this.redirectUri,
-      // Request comprehensive scopes needed for full page access including posts
-      // pages_show_list: List user's pages
-      // pages_read_engagement: Read page engagement data and get page access tokens  
-      // pages_manage_posts: Create, edit and delete posts (requires app review)
-      // pages_read_user_content: Read user-generated content on pages
-      // business_management: Access to business manager data
-      scope: 'pages_show_list,pages_read_engagement,pages_manage_posts,pages_read_user_content,business_management',
-      response_type: 'code',
-      state: stateParam,
-      auth_type: 'rerequest'
+      client_id: this.appId,                    // Your Facebook App ID
+      redirect_uri: this.redirectUri,           // Where Facebook sends user after auth
+      response_type: 'code',                    // We want authorization code (not token)
+      state: stateParam,                        // CSRF protection + user identification
+      auth_type: 'rerequest',                   // Force permission dialog even if granted before
+      
+      // 🎯 FACEBOOK PERMISSIONS (SCOPES) REQUESTED:
+      scope: [
+        'pages_show_list',           // ✅ List user's Facebook pages
+        'pages_read_engagement',     // ✅ Get page access tokens (essential for posting)
+        'pages_manage_posts',        // ⚠️  Post to pages (requires Meta app review)
+        'pages_read_user_content',   // ✅ Read content on user's pages  
+        'business_management'        // ✅ Access business manager data
+      ].join(',')
     });
 
     const finalUrl = `${baseUrl}?${params.toString()}`;
@@ -69,18 +109,42 @@ export class FacebookService {
   }
 
   /**
-   * Exchange authorization code for access token
+   * 🔄 STEP 2: Exchange authorization code for access token
+   * 
+   * After user completes Facebook login, Facebook redirects back with a 'code'.
+   * This method exchanges that temporary code for a proper access token.
+   * 
+   * 🔐 TOKEN EXCHANGE FLOW:
+   * 1. Facebook redirects to our callback with: ?code=ABC123&state=user_info
+   * 2. We extract the 'code' parameter
+   * 3. Send code + app credentials to Facebook
+   * 4. Facebook responds with user access token + user ID
+   * 5. Use this token to get user's pages (see getUserPages)
+   * 
+   * 🎯 WHAT WE GET BACK:
+   * - access_token: Short-lived user token (expires in ~60 minutes)
+   * - user_id: Facebook user ID (numeric)
+   * 
+   * ⚠️ IMPORTANT: This user token expires quickly! We use it immediately 
+   * to get page tokens, which last much longer and are stored in database.
+   * 
+   * @param code - Authorization code from Facebook callback URL
+   * @returns Promise with access_token and user_id
    */
   async exchangeCodeForToken(code: string): Promise<{ access_token: string; user_id: string }> {
     try {
+      // 🌐 Facebook's token exchange endpoint
       const tokenUrl = `https://graph.facebook.com/${this.apiVersion}/oauth/access_token`;
+      
+      // 🔑 Parameters needed to exchange code for token
       const params = new URLSearchParams({
-        client_id: this.appId,
-        client_secret: this.appSecret,
-        redirect_uri: this.redirectUri,
-        code: code
+        client_id: this.appId,          // Your app ID (proves this request is from your app)
+        client_secret: this.appSecret,  // Your app secret (proves you own the app)
+        redirect_uri: this.redirectUri, // Must match the original OAuth URL
+        code: code                      // The authorization code from Facebook
       });
 
+      // 📡 Make the token exchange request
       const response = await fetch(`${tokenUrl}?${params.toString()}`);
       const data = await response.json();
 
@@ -99,14 +163,37 @@ export class FacebookService {
   }
 
   /**
-   * Get user's Facebook pages
+   * 📄 STEP 3: Get user's Facebook pages and their access tokens
+   * 
+   * This is the MOST IMPORTANT method for Facebook integration!
+   * It fetches all pages the user manages and gets long-lived page access tokens.
+   * 
+   * 🔐 WHY PAGE TOKENS ARE CRUCIAL:
+   * - User tokens expire in ~60 minutes
+   * - Page tokens can last 60+ days (much more useful!)
+   * - Page tokens are what we store and use for posting
+   * - Each page has its own unique access token
+   * 
+   * 📋 TWO-STEP PROCESS:
+   * 1. GET /me/accounts → List all pages user manages + their page tokens
+   * 2. For each page: GET /page_id → Get detailed page info (name, picture, etc.)
+   * 
+   * 💾 WHAT WE STORE IN DATABASE:
+   * - facebook_page_id: Page's Facebook ID (e.g., "123456789")
+   * - name: Page name (e.g., "My Business Page")
+   * - access_token: Long-lived page token (for posting)
+   * - category, fan_count, picture: Additional page details
+   * 
+   * @param accessToken - User access token from exchangeCodeForToken
+   * @returns Array of page data with access tokens
    */
   async getUserPages(accessToken: string): Promise<FacebookApiPage[]> {
     try {
+      // 🚀 STEP 3A: Get all Facebook pages that user manages
       const accountsUrl = `https://graph.facebook.com/${this.apiVersion}/me/accounts`;
       const baseParams = new URLSearchParams({
-        access_token: accessToken,
-        fields: 'id,name,access_token'
+        access_token: accessToken,   // User token (short-lived)
+        fields: 'id,name,access_token'  // We want: page ID, page name, page token
       });
 
       console.log('🚀 === FACEBOOK GET USER PAGES START ===');
@@ -372,8 +459,38 @@ export class FacebookService {
   }
 
   /**
-   * Post content to a Facebook page with enhanced functionality
-   * Supports text, links, images, and scheduling
+   * 📝 POST CONTENT TO FACEBOOK PAGE
+   * 
+   * This is where the magic happens! Posts content to a Facebook page using the Graph API.
+   * 
+   * 🔑 AUTHENTICATION:
+   * - Uses the PAGE access token (not user token!)
+   * - Page token was stored in database during getUserPages()
+   * - Page tokens are long-lived and don't expire quickly
+   * 
+   * 📱 SUPPORTED POST TYPES:
+   * - 📝 Text posts: Just message content
+   * - 🔗 Link posts: URL + optional message  
+   * - 🖼️ Image posts: Image URL + caption
+   * - ⏰ Scheduled posts: Post at specific future time
+   * - 🏷️ Posts with tags: Hashtags and mentions
+   * 
+   * 🌐 FACEBOOK API ENDPOINTS USED:
+   * - Text/Link: POST /page_id/feed
+   * - Images: POST /page_id/photos (different endpoint!)
+   * 
+   * 📋 FACEBOOK API PARAMETERS:
+   * - message: Post text content
+   * - link: URL to share
+   * - url: Image URL (for photos endpoint)
+   * - caption: Image caption (replaces message for photos)
+   * - scheduled_publish_time: Unix timestamp for future posting
+   * - published: true/false (false for drafts)
+   * 
+   * @param pageId - Facebook page ID (e.g., "123456789")
+   * @param pageAccessToken - Long-lived page access token
+   * @param post - Post content and settings
+   * @returns Success/failure result with post ID
    */
   async postToPage(pageId: string, pageAccessToken: string, post: FacebookPost): Promise<FacebookPostResponse> {
     try {
@@ -387,36 +504,36 @@ export class FacebookService {
         published: post.published
       });
 
-      // Determine post endpoint and method based on content type
-      let postUrl = `https://graph.facebook.com/${this.apiVersion}/${pageId}/feed`;
+      // 🎯 STEP 1: Determine which Facebook API endpoint to use
+      let postUrl = `https://graph.facebook.com/${this.apiVersion}/${pageId}/feed`;  // Default: text/link posts
       let postData: any = {
-        access_token: pageAccessToken,
-        published: post.published !== false ? 'true' : 'false'
+        access_token: pageAccessToken,  // 🔑 Page token (essential!)
+        published: post.published !== false ? 'true' : 'false'  // Publish immediately or save as draft
       };
 
-      // Handle text content
+      // 📝 STEP 2: Add text content
       if (post.message) {
-        postData.message = post.message;
+        postData.message = post.message;  // Post text content
       }
 
-      // Handle link sharing
+      // 🔗 STEP 3: Add link sharing
       if (post.link) {
-        postData.link = post.link;
+        postData.link = post.link;  // URL to share (Facebook will auto-generate preview)
       }
 
-      // Handle image posting
+      // 🖼️ STEP 4: Handle image posts (special case!)
       if (post.image_url) {
-        // For images, we need to use the photos endpoint
+        // ⚠️ IMPORTANT: Images use different endpoint and parameters!
         postUrl = `https://graph.facebook.com/${this.apiVersion}/${pageId}/photos`;
-        postData.url = post.image_url;
-        postData.caption = post.message || '';
-        delete postData.message; // Use caption instead of message for photos
+        postData.url = post.image_url;      // Image URL (Facebook downloads and posts it)
+        postData.caption = post.message || '';  // Use 'caption' for images, not 'message'
+        delete postData.message;  // Remove message field for photos endpoint
       }
 
-      // Handle scheduled posts
+      // ⏰ STEP 5: Handle scheduled posts
       if (post.scheduled_publish_time) {
-        postData.scheduled_publish_time = post.scheduled_publish_time;
-        postData.published = 'false'; // Scheduled posts can't be published immediately
+        postData.scheduled_publish_time = post.scheduled_publish_time;  // Unix timestamp
+        postData.published = 'false';  // 📌 Scheduled posts CANNOT be published immediately
       }
 
       console.log('📡 Posting to URL:', postUrl);

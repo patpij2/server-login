@@ -1,10 +1,35 @@
 /**
  * 📘 FACEBOOK CONTROLLER
  * 
- * Handles all Facebook-related HTTP requests including:
- * - Authentication
- * - Page management
- * - Posting content
+ * This controller handles all Facebook-related HTTP requests and orchestrates
+ * the complete Facebook integration flow.
+ * 
+ * 🌊 REQUEST FLOW:
+ * Frontend → Controller → Service → Facebook API → Database → Response
+ * 
+ * 🔐 AUTHENTICATION ENDPOINTS:
+ * - GET /facebook/auth/url → Generate OAuth URL for user login
+ * - GET /facebook/auth/callback → Handle Facebook redirect after login
+ * 
+ * 📄 PAGE MANAGEMENT ENDPOINTS:
+ * - GET /facebook/pages → List user's connected Facebook pages
+ * - GET /facebook/status → Check if user has Facebook connected
+ * - DELETE /facebook/pages/:pageId → Remove page connection
+ * 
+ * 📝 POSTING ENDPOINTS:
+ * - POST /facebook/post → Create new post on Facebook page
+ * - POST /facebook/upload-media → Upload media to Facebook
+ * 
+ * 🔒 SECURITY:
+ * - All endpoints require JWT authentication
+ * - User can only access their own pages
+ * - Page access tokens stored securely in database
+ * 
+ * 💾 DATA FLOW:
+ * 1. User authenticates → Get user token
+ * 2. Fetch user's pages → Get page tokens  
+ * 3. Store page data → Database persistence
+ * 4. Use page tokens → Post content to Facebook
  */
 
 import { Request, Response } from 'express';
@@ -246,10 +271,42 @@ export class FacebookController {
   };
 
   /**
-   * Post content to a Facebook page
+   * 📝 CREATE FACEBOOK POST
+   * 
+   * This endpoint handles posting content to Facebook pages.
+   * 
+   * 🌊 REQUEST FLOW:
+   * 1. Frontend sends post data → This controller method
+   * 2. Validate user authentication → Check JWT token
+   * 3. Extract post parameters → message, pageId, link, etc.
+   * 4. Verify user owns the page → Database lookup
+   * 5. Get page access token → From database
+   * 6. Call Facebook API → Through FacebookService
+   * 7. Return success/error → Back to frontend
+   * 
+   * 📋 EXPECTED REQUEST BODY:
+   * {
+   *   "pageId": "123456789",              // Facebook page ID
+   *   "message": "Hello world!",          // Post text content
+   *   "link": "https://example.com",      // Optional: URL to share
+   *   "imageUrl": "https://img.jpg",      // Optional: Image URL
+   *   "scheduledTime": "2024-12-25T10:00", // Optional: ISO date string
+   *   "published": true,                  // Optional: Publish immediately
+   *   "tags": ["#marketing", "#social"]   // Optional: Hashtags
+   * }
+   * 
+   * 🔒 SECURITY CHECKS:
+   * - User must be authenticated (JWT required)
+   * - User must own the specified Facebook page
+   * - Page must exist in our database
+   * - Page access token must be valid
+   * 
+   * @route POST /facebook/post
+   * @access Private (JWT required)
    */
   postToPage = async (req: Request, res: Response): Promise<void> => {
     try {
+      // 🔐 STEP 1: Verify user authentication
       const userId = req.user?.id;
       if (!userId) {
         ResponseHelper.error(res, 'User not authenticated', 401);
@@ -260,6 +317,7 @@ export class FacebookController {
       console.log('Request body:', JSON.stringify(req.body, null, 2));
       console.log('User ID:', userId);
 
+      // 📥 STEP 2: Extract post parameters from request body
       const { pageId, message, link, imageUrl, scheduledTime, published, tags } = req.body;
 
       console.log('Extracted fields:');
@@ -271,13 +329,13 @@ export class FacebookController {
       console.log('  published:', published);
       console.log('  tags:', tags);
 
-      // Validation
+      // 🔍 STEP 3: Validate required parameters
       if (!pageId) {
         ResponseHelper.error(res, 'Page ID is required', 400);
         return;
       }
 
-      // More flexible validation - check for any content
+      // ✅ STEP 4: Validate post content (at least one type of content required)
       const hasMessage = message && message.trim().length > 0;
       const hasLink = link && link.trim().length > 0;
       const hasImageUrl = imageUrl && imageUrl.trim().length > 0;
@@ -291,7 +349,7 @@ export class FacebookController {
         return;
       }
 
-      // Verify user owns this page
+      // 🔒 STEP 5: Security check - Verify user owns the specified Facebook page
       const userPages = await this.facebookService.getUserConnectedPages(userId);
       const targetPage = userPages.find(page => page.facebook_page_id === pageId);
       
@@ -326,19 +384,20 @@ export class FacebookController {
 
       console.log('🔍 Checking tags:', { tags, isArray: Array.isArray(tags), length: tags?.length });
       
-      // Use enhanced posting method if tags are provided
+      // 🏷️ STEP 6A: Use enhanced posting method if hashtags/tags are provided
       if (tags && Array.isArray(tags) && tags.length > 0) {
         console.log('🚀 Using enhanced posting method with tags');
+        // Call FacebookService to post with hashtag support
         const result = await this.facebookService.createEnhancedPost(
-          targetPage.facebook_page_id,
-          targetPage.access_token,
+          targetPage.facebook_page_id,    // Facebook page ID
+          targetPage.access_token,        // Long-lived page access token from database
           {
-            message,
-            link,
-            imageUrl,
-            scheduledTime: scheduledTime ? new Date(scheduledTime) : undefined,
-            published: published !== false,
-            tags
+            message,                      // Post text content
+            link,                         // Optional URL to share
+            imageUrl,                     // Optional image URL
+            scheduledTime: scheduledTime ? new Date(scheduledTime) : undefined, // Optional future date
+            published: published !== false, // Publish immediately or save as draft
+            tags                          // Hashtags array (will be appended to message)
           }
         );
 
@@ -355,20 +414,21 @@ export class FacebookController {
         return;
       }
 
-      // Standard posting method
+      // 📝 STEP 6B: Use standard posting method (no hashtags)
       console.log('🚀 Using standard posting method');
       const post: FacebookPost = {
-        message,
-        link,
-        image_url: imageUrl,
-        scheduled_publish_time: scheduledUnixTime,
-        published: published !== false
+        message,                          // Post text content
+        link,                             // Optional URL to share
+        image_url: imageUrl,              // Optional image URL
+        scheduled_publish_time: scheduledUnixTime, // Optional Unix timestamp for scheduling
+        published: published !== false    // Publish immediately or save as draft
       };
 
+      // 🚀 Call FacebookService to post to Facebook API
       const result = await this.facebookService.postToPage(
-        targetPage.facebook_page_id,
-        targetPage.access_token,
-        post
+        targetPage.facebook_page_id,     // Facebook page ID (e.g., "123456789")
+        targetPage.access_token,         // Long-lived page access token from database
+        post                             // Post content object
       );
 
       if (result.success) {

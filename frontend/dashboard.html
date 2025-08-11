@@ -50,6 +50,86 @@
             text-align: center;
             padding: 40px 0;
         }
+        
+        /* Collapsible Sections Styles */
+        .dashboard-section {
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            user-select: none;
+        }
+        
+        .section-header:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%);
+        }
+        
+        .section-header.memory { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .section-header.integrations { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .section-header.scraping { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .section-header.social-media { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .section-header.data-management { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        
+        .section-header.memory:hover { background: linear-gradient(135deg, #5a6fd8 0%, #6b4190 100%); }
+        .section-header.integrations:hover { background: linear-gradient(135deg, #e084e9 0%, #e34e5a 100%); }
+        .section-header.scraping:hover { background: linear-gradient(135deg, #3d9bec 0%, #00e0ec 100%); }
+        .section-header.social-media:hover { background: linear-gradient(135deg, #ff8a8e 0%, #fdbfdf 100%); }
+        .section-header.data-management:hover { background: linear-gradient(135deg, #3ad769 0%, #30e7c5 100%); }
+        
+        .section-toggle {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+        
+        .section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .section-content {
+            padding: 20px;
+            display: none;
+            background: #fafafa;
+        }
+        
+        .section-content.active {
+            display: block;
+        }
+        
+        .subsection {
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #007bff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .subsection h3 {
+            margin-top: 0;
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .section-summary {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
         .dashboard-title {
             font-size: 32px;
             color: #007bff;
@@ -1341,51 +1421,68 @@
                 <p>🆔 User ID: <span id="userId">Loading...</span></p>
             </div>
             
-            <div class="memory-section">
-                <h2>Add a New Memory</h2>
-                <form id="memoryForm">
-                    <textarea id="memoryContent" placeholder="Type something to remember..."></textarea>
-                    <button type="submit">Save to Supermemory</button>
-                </form>
-                <div id="memoryMessage"></div>
+            <!-- Memory & Knowledge Management Section -->
+            <div class="dashboard-section">
+                <div class="section-header memory" onclick="toggleSection('memory-section')">
+                    <div>
+                        <span>🧠 Memory & Knowledge Management</span>
+                        <div class="section-summary">Store, search, and interact with your personal knowledge base</div>
+                    </div>
+                    <span class="section-toggle collapsed" id="memory-section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="memory-section-content">
+                    <div class="subsection">
+                        <h3>Add a New Memory</h3>
+                        <form id="memoryForm">
+                            <textarea id="memoryContent" placeholder="Type something to remember..."></textarea>
+                            <button type="submit">Save to Supermemory</button>
+                        </form>
+                        <div id="memoryMessage"></div>
+                    </div>
+
+                    <div class="subsection">
+                        <h3>🔍 Search Your Memories</h3>
+                        <form id="searchForm">
+                            <input type="text" id="searchQuery" placeholder="Search for memories..." required>
+                            <button type="submit">🔍 Search</button>
+                        </form>
+                        <div id="searchResults"></div>
+                    </div>    
+
+                    <div class="subsection">
+                        <h3>🤖 Ask AI About Your Memories</h3>
+                        <form id="qaForm">
+                            <input type="text" id="qaQuery" placeholder="Ask a question about your memories..." required>
+                            <button type="submit" id="qaButton">🤖 Ask AI</button>
+                        </form>
+                        <div id="qaResults"></div>
+                    </div>
+                    
+                    <div class="subsection">
+                        <h3>✉️ Generate Email Schema from Memory</h3>
+                        <p class="section-description">AI analyzes your email writing style from memories and generates email schemas that match your tone and structure.</p>
+                        <form id="emailSchemaForm">
+                            <input type="text" id="emailSchemaQuery" placeholder="Describe the type of email (e.g., 'professional follow-up', 'friendly reminder')..." required>
+                            <button type="submit" id="emailSchemaButton">✉️ Generate Email Schema</button>
+                        </form>
+                        <div id="emailSchemaResults"></div>
+                    </div>
+                </div>
             </div>
 
-            <div class="search-section">
-                <h2>Search Your Memories</h2>
-                <form id="searchForm">
-                    <input type="text" id="searchQuery" placeholder="Search for anything...">
-                    <button type="submit">Search</button>
-                </form>
-                <div id="searchResults">
-                    <!-- Search results will be displayed here -->
-                </div>
-            </div>    
 
-            <div class="qa-section">
-                <h2>Ask AI About Your Memories</h2>
-                <form id="qaForm">
-                    <input type="text" id="questionInput" placeholder="Ask anything about your memories... (e.g., 'What did I learn about React?' or 'When was my last meeting?')">
-                    <button type="submit" id="qaButton">Ask AI</button>
-                </form>
-                <div id="qaResults">
-                    <!-- AI answers will be displayed here -->
+            <!-- Data Scraping & Collection Section -->
+            <div class="dashboard-section">
+                <div class="section-header scraping" onclick="toggleSection('scraping-section')">
+                    <div>
+                        <span>🌐 Data Scraping & Collection</span>
+                        <div class="section-summary">Extract emails and personal data from websites</div>
+                    </div>
+                    <span class="section-toggle collapsed" id="scraping-section-toggle">▼</span>
                 </div>
-            </div>
-
-            <div class="email-schema-section">
-                <h2>Generate Email Schema from Memory</h2>
-                <p class="section-description">AI analyzes your email writing style from memories and generates email schemas that match your tone and structure.</p>
-                <form id="emailSchemaForm">
-                    <textarea id="emailSchemaPrompt" placeholder="Describe the email you want to generate (e.g., 'Follow-up email to client about project status', 'Thank you email to team after successful launch', 'Meeting invitation to stakeholders')" required></textarea>
-                    <button type="submit" id="generateSchemaBtn">🎯 Generate Email Schema</button>
-                </form>
-                <div id="emailSchemaResults">
-                    <!-- Email schema results will be displayed here -->
-                </div>
-            </div>
-
-            <div class="email-scraping-section">
-                <h2>Email & Personal Data Scraper</h2>
+                <div class="section-content" id="scraping-section-content">
+                    <div class="subsection">
+                        <h3>Email & Personal Data Scraper</h3>
                 <form id="emailScrapingForm">
                     <textarea id="websiteUrls" placeholder="Enter website URLs to scrape for emails (one URL per line, e.g.:
 https://example.com
@@ -1418,24 +1515,34 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                     </div>
                     <button type="submit" id="scrapeButton">🔍 Start Batch Scraping</button>
                 </form>
-                <div id="emailScrapingResults">
-                    <!-- Email scraping results will be displayed here -->
-                </div>
-            </div>
-
-            <div class="csv-files-section">
-                <h2>📁 Saved CSV Files</h2>
+                        <div id="emailScrapingResults"></div>
+                    </div>
+                    
+                    <div class="subsection">
+                        <h3>📁 Saved CSV Files</h3>
                 <div class="csv-files-controls">
                     <button type="button" id="refreshCsvFilesBtn" class="refresh-btn">🔄 Refresh List</button>
                     <button type="button" id="cleanupOldFilesBtn" class="cleanup-btn">🧹 Clean Up Old Files</button>
                 </div>
-                <div id="csvFilesList">
-                    <div class="loading">Loading saved CSV files...</div>
+                        <div id="csvFilesList">
+                            <div class="loading">Loading saved CSV files...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="gmail-section">
-                <h2>Gmail Integration</h2>
+            <!-- Email Integration Section -->
+            <div class="dashboard-section">
+                <div class="section-header integrations" onclick="toggleSection('integrations-section')">
+                    <div>
+                        <span>📧 Email Integration</span>
+                        <div class="section-summary">Connect Gmail for email drafting and management</div>
+                    </div>
+                    <span class="section-toggle collapsed" id="integrations-section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="integrations-section-content">
+                    <div class="subsection">
+                        <h3>📧 Gmail Integration</h3>
                 <div class="gmail-connection" id="gmailConnection">
                     <h3>Connect Your Gmail Account</h3>
                     <p>Connect your Gmail account to create drafts directly from the dashboard.</p>
@@ -1457,8 +1564,21 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                 </div>
             </div>
 
-                    <div class="facebook-section" id="facebook-section">
-            <h2>📘 Facebook Integration</h2>
+                </div>
+            </div>
+
+            <!-- Social Media Management Section -->
+            <div class="dashboard-section">
+                <div class="section-header social-media" onclick="toggleSection('social-media-section')">
+                    <div>
+                        <span>📱 Social Media Management</span>
+                        <div class="section-summary">Manage and post to your social media accounts</div>
+                    </div>
+                    <span class="section-toggle collapsed" id="social-media-section-toggle">▼</span>
+                </div>
+                <div class="section-content" id="social-media-section-content">
+                    <div class="subsection">
+                        <h3>📘 Facebook Integration</h3>
                 
                 <!-- Facebook Status Overview -->
                 <div class="facebook-status-overview" id="facebookStatusOverview">
@@ -1538,6 +1658,10 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
                 </div>
             </div>
         
+
+                    </div>
+                </div>
+            </div>
 
             <div class="back-to-login">
                 <a href="index.html">← Back to Login</a>
@@ -3494,6 +3618,22 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
             }
         });
 
+        // Section toggle functionality
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const toggle = document.getElementById(sectionId + '-toggle');
+            
+            if (content && toggle) {
+                if (content.classList.contains('active')) {
+                    content.classList.remove('active');
+                    toggle.classList.add('collapsed');
+                } else {
+                    content.classList.add('active');
+                    toggle.classList.remove('collapsed');
+                }
+            }
+        }
+
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Check for Facebook callback first
@@ -3509,6 +3649,8 @@ https://example.net)" required style="width: 100%; height: 120px; padding: 10px;
             setTimeout(() => {
                 addFacebookEventListeners();
             }, 100);
+            
+            // All sections start collapsed by default for cleaner initial view
         });
 
         // Add this at the top of the script section (after backend URL logic)

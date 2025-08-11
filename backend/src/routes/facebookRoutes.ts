@@ -1,7 +1,39 @@
 /**
  * 📘 FACEBOOK ROUTES
+ *
+ * Defines all Facebook-related API endpoints and maps them to controller methods.
  * 
- * Defines all Facebook-related API endpoints
+ * 🔐 AUTHENTICATION FLOW ROUTES:
+ * GET  /facebook/auth/url      → Generate Facebook OAuth URL
+ * GET  /facebook/auth/callback → Handle Facebook redirect (with auth code)
+ * 
+ * 📄 PAGE MANAGEMENT ROUTES:
+ * GET    /facebook/status      → Check user's Facebook connection status
+ * GET    /facebook/pages       → List user's connected Facebook pages
+ * DELETE /facebook/pages/:id   → Remove a Facebook page connection
+ * DELETE /facebook/disconnect  → Remove all Facebook connections
+ * PUT    /facebook/pages/:id/refresh → Refresh page data from Facebook
+ * 
+ * 📝 POSTING ROUTES:
+ * POST /facebook/post          → Create new post on Facebook page
+ * POST /facebook/upload-media  → Upload media to Facebook
+ * 
+ * 🔧 UTILITY ROUTES:
+ * GET /facebook/pages/:id/check-posting → Test if posting is available
+ * GET /facebook/debug/inspect → Debug raw Facebook API responses
+ * 
+ * 🔒 SECURITY:
+ * - All routes except /auth/callback require JWT authentication
+ * - Users can only access their own Facebook pages
+ * - Debug middleware logs all POST requests for troubleshooting
+ * 
+ * 🌊 TYPICAL USAGE FLOW:
+ * 1. Frontend calls /auth/url → User gets Facebook login URL
+ * 2. User clicks URL → Facebook login page opens
+ * 3. User logs in → Facebook redirects to /auth/callback
+ * 4. Callback stores page tokens → User's pages are now connected
+ * 5. Frontend calls /pages → Get list of connected pages
+ * 6. Frontend calls /post → Create posts on pages
  */
 
 import { Router } from 'express';
