@@ -541,21 +541,37 @@ export class FacebookService {
    */
   async deletePageConnection(pageId: string, userId: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      console.log('🗑️ === DELETE PAGE CONNECTION START ===');
+      console.log('Page ID (facebook_page_id):', pageId);
+      console.log('User ID:', userId);
+      
+      const { data, error, count } = await supabase
         .from('facebook_pages')
         .delete()
-        .eq('id', pageId)
-        .eq('user_id', userId);
+        .eq('facebook_page_id', pageId)
+        .eq('user_id', userId)
+        .select();
+
+      console.log('📊 Delete result:', { data, error, count });
 
       if (error) {
+        console.log('❌ Supabase delete error:', JSON.stringify(error, null, 2));
         Logger.error('Error deleting Facebook page connection:', 'FacebookService', error);
-        throw new Error('Failed to delete Facebook page connection');
+        throw new Error(`Failed to delete Facebook page connection: ${error.message}`);
       }
 
+      if (!data || data.length === 0) {
+        console.log('⚠️ No matching records found to delete');
+        throw new Error('No matching Facebook page found to delete');
+      }
+
+      console.log('✅ Page connection deleted successfully');
+      console.log('=== DELETE PAGE CONNECTION END ===');
       return true;
     } catch (error) {
+      console.log('💥 Exception in deletePageConnection:', error);
       Logger.error('Error deleting Facebook page connection:', 'FacebookService', error as Error);
-      throw new Error('Failed to delete Facebook page connection');
+      throw error instanceof Error ? error : new Error('Failed to delete Facebook page connection');
     }
   }
 
