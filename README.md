@@ -1,6 +1,6 @@
 # 🔐 Professional Login System
 
-A professional login system with separated frontend and backend architecture, featuring Gmail integration and memory management. This demonstrates modern web development practices with independent frontend and backend services.
+A comprehensive login system with separated frontend and backend architecture, featuring Gmail integration, Facebook integration, memory management, and an organized dashboard interface. This demonstrates modern web development practices with independent frontend and backend services and full social media management capabilities.
 
 ## 🏗️ Architecture
 
@@ -8,8 +8,9 @@ A professional login system with separated frontend and backend architecture, fe
 server-login/
 ├── frontend/                 # Frontend application (Port 3000)
 │   ├── index.html           # Login interface
-│   ├── dashboard.html       # User dashboard with Gmail integration
+│   ├── dashboard.html       # Organized dashboard with collapsible sections
 │   ├── gmail-callback.html  # Gmail OAuth callback
+│   ├── facebook-callback.html # Facebook OAuth callback
 │   └── package.json         # Frontend dependencies
 ├── backend/                  # Backend API (Port 8000)
 │   ├── src/
@@ -21,11 +22,13 @@ server-login/
 │   │   ├── services/        # Business logic
 │   │   ├── utils/           # Helper functions
 │   │   └── index.ts         # API server
-│   ├── scripts/             # Database setup scripts
+│   ├── scripts/             # Database setup & Facebook debug scripts
 │   ├── supabase_migrations/ # Database migrations
 │   ├── package.json         # Backend dependencies
 │   └── tsconfig.json        # TypeScript config
 ├── GMAIL_INTEGRATION_GUIDE.md # Complete Gmail setup guide
+├── FACEBOOK_INTEGRATION_GUIDE.md # Complete Facebook setup guide
+├── cursor-docs/             # Documentation and guides
 └── README.md                # This file
 ```
 
@@ -62,7 +65,7 @@ The frontend will start on `http://localhost:3000`
 2. You should see a connection status indicator
 3. Register a new user
 4. Login with the registered user
-5. Access the dashboard with Gmail integration
+5. Access the organized dashboard with Gmail and Facebook integration
 
 ## 🔧 Available Scripts
 
@@ -102,17 +105,31 @@ The backend provides these API endpoints:
 - **GET /api/gmail/check** - Check Gmail connection status
 - **DELETE /api/gmail/disconnect** - Disconnect Gmail account
 
+#### Facebook Integration
+- **GET /api/facebook/auth/url** - Get Facebook OAuth2 authorization URL
+- **GET /api/facebook/auth/callback** - Handle Facebook OAuth2 callback
+- **GET /api/facebook/status** - Check Facebook connection status
+- **GET /api/facebook/pages** - List connected Facebook pages
+- **POST /api/facebook/post** - Create post on Facebook page
+- **DELETE /api/facebook/pages/:id** - Remove Facebook page connection
+- **DELETE /api/facebook/disconnect** - Remove all Facebook connections
+
 #### System
 - **GET /api/health** - Health check
 
 ### Frontend (Port 3000)
-A modern web interface with:
-- Login and registration forms
-- User dashboard with multiple features
-- Gmail integration for creating drafts
-- Memory management system
-- Real-time feedback messages
-- API calls to backend
+A modern web interface with organized dashboard featuring:
+- **Login and registration forms** with validation
+- **Collapsible dashboard sections** that start collapsed:
+  - 🧠 Memory & Knowledge Management
+  - 📊 Data Scraping & Collection  
+  - 🔗 Third-Party Integrations
+  - 📱 Social Media Management
+- **Gmail integration** for creating drafts
+- **Facebook integration** for social media posting
+- **Memory management system** for note-taking
+- **Real-time feedback messages** and status indicators
+- **Responsive design** with smooth animations and color-coded sections
 
 ### Security Features
 - **Password Hashing**: Passwords are hashed using bcrypt before storage
@@ -157,9 +174,11 @@ Browser (localhost:3000)
    - Click "Login"
 
 4. **Test Dashboard Features:**
-   - Memory management: Add and search memories
-   - Gmail integration: Connect Gmail and create drafts
-   - User profile: View user information
+   - **Memory & Knowledge Management**: Add and search memories
+   - **Gmail Integration**: Connect Gmail and create drafts
+   - **Facebook Integration**: Connect Facebook pages and create posts
+   - **Collapsible Sections**: Toggle sections open/closed
+   - **User Profile**: View user information
 
 5. **Test error cases:**
    - Try registering with the same email twice
@@ -193,10 +212,13 @@ Browser (localhost:3000)
 - **Event Handling**: Form submissions and user interactions
 - **Error Handling**: User-friendly error messages
 
-### Gmail Integration
-- **OAuth2 Flow**: Secure authentication with Google
-- **API Integration**: Using Gmail API for draft creation
+### Third-Party Integrations
+- **Gmail OAuth2 Flow**: Secure authentication with Google
+- **Gmail API Integration**: Draft creation and management
+- **Facebook OAuth2 Flow**: Secure authentication with Meta
+- **Facebook Graph API**: Page management and posting
 - **Token Management**: Secure storage and refresh of access tokens
+- **Database Storage**: Page access tokens stored securely in Supabase
 
 ## 🔄 Development Workflow
 
@@ -231,6 +253,11 @@ Browser (localhost:3000)
 **Gmail integration issues:**
 - See [GMAIL_INTEGRATION_GUIDE.md](GMAIL_INTEGRATION_GUIDE.md) for detailed setup and troubleshooting
 
+**Facebook integration issues:**
+- See [FACEBOOK_INTEGRATION_GUIDE.md](FACEBOOK_INTEGRATION_GUIDE.md) for detailed setup and troubleshooting
+- Facebook pages not loading: Check app permissions and Meta app review status
+- Posting fails: Verify `pages_manage_posts` permission is granted and app is reviewed
+
 **Database connection issues:**
 - Verify Supabase credentials in environment variables
 - Check if database tables are created
@@ -240,14 +267,16 @@ Browser (localhost:3000)
 
 Once you understand this setup, you can enhance it with:
 
-1. **Additional Integrations**: Slack, Discord, or other APIs
-2. **React/Vue Frontend**: Replace vanilla HTML with a modern framework
-3. **Docker**: Containerize both frontend and backend
-4. **Testing**: Add unit and integration tests
-5. **CI/CD**: Set up automated deployment pipelines
-6. **Monitoring**: Add logging and monitoring tools
-7. **Caching**: Implement Redis for performance
-8. **File Upload**: Add file upload capabilities
+1. **Additional Social Media**: Instagram, LinkedIn, Twitter/X APIs
+2. **Advanced Facebook Features**: Scheduled posting, analytics, media uploads
+3. **React/Vue Frontend**: Replace vanilla HTML with a modern framework
+4. **Docker**: Containerize both frontend and backend
+5. **Testing**: Add unit and integration tests
+6. **CI/CD**: Set up automated deployment pipelines
+7. **Monitoring**: Add logging and monitoring tools
+8. **Caching**: Implement Redis for performance
+9. **File Upload**: Add file upload capabilities for media posts
+10. **Analytics Dashboard**: Track posting performance and engagement
 
 ## 📖 Additional Resources
 
@@ -256,7 +285,9 @@ Once you understand this setup, you can enhance it with:
 - [Fetch API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 - [Supabase Documentation](https://supabase.com/docs)
 - [Gmail API Documentation](https://developers.google.com/gmail/api)
+- [Facebook Graph API Documentation](https://developers.facebook.com/docs/graph-api/)
 - [GMAIL_INTEGRATION_GUIDE.md](GMAIL_INTEGRATION_GUIDE.md) - Complete Gmail setup guide
+- [FACEBOOK_INTEGRATION_GUIDE.md](FACEBOOK_INTEGRATION_GUIDE.md) - Complete Facebook setup guide
 
 ---
 
